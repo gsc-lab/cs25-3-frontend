@@ -1,18 +1,9 @@
-// vue에서 createApp 함수 불러오기
-import { createApp } from 'vue'
+import { createApp } from 'vue'      // createApp 함수 가져오기
+import { createPinia } from 'pinia'  // store 생성용 함수 가져오기
+import App from './App.vue'          // 최상위 루트 컴포넌트 가져오기
+import router from './router'        // 라우터 설정 파일 가져오기
 
-// pinia에서 createPinia 함수 불러오기
-// store 생성용 함수 가져오기
-import { createPinia } from 'pinia'
-
-// 최상위 루트 컴포넌트로 사용 할 App.vue 파일 가져오기
-import App from './App.vue'
-
-// 라우터 설정 파일 가져오기
-// import router from './router'
-
-createApp(App)
-  .use(createPinia())
-//   .use(router)
-  .mount('#app')
-
+createApp(App)           // Vue 앱 인스턴스 생성
+    .use(createPinia())  // 전역 상태 관리(Pinia) 연결
+    .use(router)         // 라우터 연결
+    .mount('#app')       // index.html 안의 id="app" 요소에 앱 마운트
