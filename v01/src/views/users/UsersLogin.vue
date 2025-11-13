@@ -73,7 +73,7 @@
 import { reactive, ref } from "vue";
 import { useRouter } from "vue-router";
 import { useUserStore } from "@/stores/user";
-import { UsersApi } from "@/api/users";   // 👈 로그인 API
+import { UsersApi } from "@/api/users";
 import FormField from "@/components/FormField.vue";
 import SubmitButton from "@/components/SubmitButton.vue";
 
