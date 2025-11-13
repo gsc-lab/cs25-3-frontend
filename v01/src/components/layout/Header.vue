@@ -20,13 +20,26 @@
 
     <!-- 로그인 버튼 -->
     <!-- /login 경로로 이동하는 버튼 -->
-    <router-link to="/login" class="login">LOGIN</router-link>
-
+    <template v-if="userStore.user">
+    <p class="login-info">
+      {{ userStore.user.role }} - {{ userStore.user.user_name }}({{ userStore.user.account }})님
+      <router-link to="/users/logout" class="logout">LOGOUT</router-link>
+    </p>
+    
+    </template>
+    <template v-else>
+    <router-link to="/users/login" class="login">LOGIN</router-link>
+    </template>
+    
   </header>
 </template>
 
 
 <script setup>
+
+import { useUserStore } from '@/stores/user';
+
+const userStore = useUserStore();
 
 // 메뉴 목록
 // 각 항목은 { to, label } 형태의 객체
