@@ -11,23 +11,31 @@ const client = axios.create({
   headers: { 'Content_Type': 'application/json' }
 })
 
-// 에러 처리
+// 에러 원본 그대로 던지기
 client.interceptors.response.use(
   (res) => res,
-  (err) => {
-    const data = err.response?.data ?? { error: "Network Error" };
-    return Promise.reject({ status: err.response?.status, data });
-  }
+  (err) => Promise.reject(err)
 );
 
 // 공통 request 헬퍼 -> 성공 시 data만 반환
 export async function request(method, url, data) {
-  // 요청, 응답 내용 res에 저장
-  const res = await client.request({ method, url, data });
+  const config = {
+    method,
+    url,
+  };
 
-  // res에 저장된 내용 중 data만 뽑아서 반환
-  return res.data;
+  // FormData면 그대로 보냄 (Content-Type 자동)
+  if (data instanceof FormData) {
+    config.data = data;
+  } else if (data !== undefined) {
+    // JSON 보낼 때만 Content-Type 지정
+    config.data = data;
+    config.headers = { "Content-Type": "application/json" };
+  }
+  // 요청 및 응답
+  const res = await client.request(config);
 
+  return res.data;  // 응답의 결과 중 data만 반환
 }
 
 export default client;
