@@ -37,7 +37,7 @@ export const HairstyleApi = {
   async updateImage(hair_id, formData) {
     const res = await request(
       "POST",
-      `/hairstyle/${encodeURIComponent(hair_id)}/image`,
+      `/hairstyle/image/${encodeURIComponent(hair_id)}`,
       formData
     );
     return res.data;

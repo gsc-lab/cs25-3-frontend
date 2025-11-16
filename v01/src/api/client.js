@@ -35,7 +35,7 @@ export async function request(method, url, data) {
   // 요청 및 응답
   const res = await client.request(config);
 
-  return res.data;  // 응답의 결과 중 data만 반환
+  return res;  // 응답: data + status + headers
 }
 
 export default client;
