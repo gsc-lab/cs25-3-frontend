@@ -5,7 +5,7 @@ import { request } from "./client"
 export const UsersApi = {
   // 회원가입
   register(payload) {
-    return request("POST", "/users", payload)
+    return request("POST", "/users/create", payload)
   },
   // 로그인
   login(payload) {
