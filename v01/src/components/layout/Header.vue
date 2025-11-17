@@ -23,7 +23,7 @@
     <template v-if="userStore.user">
     <p class="login-info">
       {{ userStore.user.role }} - {{ userStore.user.user_name }}({{ userStore.user.account }})님
-      <router-link to="/users/logout" class="logout">LOGOUT</router-link>
+      <button class="logout" @click="onLogout">LOGOUT</button>
     </p>
     
     </template>
@@ -38,8 +38,10 @@
 <script setup>
 
 import { useUserStore } from '@/stores/user';
+import { useRouter } from "vue-router";
 
 const userStore = useUserStore();
+const router = useRouter();
 
 // 메뉴 목록
 // 각 항목은 { to, label } 형태의 객체
@@ -54,5 +56,13 @@ const navItems = [
   { to: '/news', label: 'NEWS' },
   { to: '/mypage', label: 'MYPAGE' }
 ]
+
+// 로그아웃
+function onLogout() {
+  const isLogout = confirm("정말 로그아웃하시겠습니까?");
+  if (!isLogout) return;
+  userStore.logout();      // 저장된 user 삭제
+  router.push("/users/login");   // 로그인 화면으로 이동
+}
 
 </script>
