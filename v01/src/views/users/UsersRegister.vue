@@ -130,8 +130,8 @@ const form = reactive({
   account: "",
   password: "",
   user_name: "",
-  role: "",      // 라디오 단일 선택
-  gender: "",    // 라디오 단일 선택
+  role: "",
+  gender: "",
   phone: "",
   birth: "",
 });
@@ -161,19 +161,23 @@ function validate() {
   errors.user_name = form.user_name ? "" : "이름을 입력하세요.";
   errors.role      = form.role ? "" : "역할을 선택하세요.";
   errors.gender    = form.gender ? "" : "성별을 선택하세요.";
-  // phone / birth는 필요하면 여기서 추가 검증
 
-  return Object.values(errors).every((v) => v === "");
+  // errors 객체에서 values 값만 뽑아내서 values 값들이 모두 ""을 만족하는지 검사
+  // 만족할 경우 true, 만족하지 않을 경우 false 반환
+  return Object.values(errors).every(v => v === "");
 }
 
 async function onSubmit() {
   serverError.value = "";
   serverOK.value = false;
 
+  // 에러가 하나라도 있을 경우 제출 로직 종료
   if (!validate()) return;
 
-  loading.value = true;
+  loading.value = true;   // 로딩 시작
+
   try {
+    // HTTP request 및 response
     await UsersApi.register({
       account:   form.account,
       user_name: form.user_name,
@@ -184,34 +188,19 @@ async function onSubmit() {
       birth:     form.birth,
     });
 
+    // 성공했다면
     serverOK.value = true;
-    // 가입 후 바로 로그인 페이지로 이동
+
+    // 바로 로그인 페이지로 이동
     router.push("/users/login");
   } catch (e) {
-    // e = { status, data }  ← 인터셉터에서 가공된 형태라고 가정
-    const status  = e?.status ?? 0;
-    const payload = e?.data ?? {};
+    const data = e?.response?.data;
 
-    // 1) 공통 에러 메시지: { error: "메시지" }
-    if (payload.error) {
-      serverError.value = payload.error;
-    }
-
-    // 2) 필드별 에러: { errors: { account: "...", password: "...", ... } }
-    if (payload.errors && typeof payload.errors === "object") {
-      for (const [field, msg] of Object.entries(payload.errors)) {
-        if (field in errors) {
-          errors[field] = Array.isArray(msg) ? msg.join(", ") : String(msg);
-        }
-      }
-      if (!serverError.value) {
-        serverError.value = "입력값을 확인해 주세요.";
-      }
-    }
-
-    console.debug("register error:", { status, payload });
+    // 서버에서 작성한 오류 출력
+    const msg = data?.error?.message;
+    serverError.value = msg;
   } finally {
-    loading.value = false;
+    loading.value = false;  // 로딩 종료
   }
 }
 </script>
