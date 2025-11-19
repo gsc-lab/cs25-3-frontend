@@ -14,49 +14,56 @@
 
     <!-- 목록 렌더링 -->
     <div v-else class="list">
-      <article
-        v-for="item in items"
-        :key="item.news_id"
-        class="card"
-      >
-        <!-- 이미지 영역 -->
-        <div class="thumb">
-          <img
-          v-if="item.image"
-          :src="item.image"
-          :alt="item.title"
-          >
-          <div v-else class="no-image">이미지 없음</div>
-        </div>
+      <article>
+        <table>
+          <thead>
+            <tr>
+              <th>선택</th>
+              <th>제목</th>
+              <th>작성일</th>
+              <th colspan="2">편집</th>
+            </tr>
+          </thead>
+          <!-- 정보 영역 -->
+          <tbody>
+            <tr
+              v-for="item in items"
+              :key="item.news_id"
+              class="card"
+            >
+              <td><input type="checkbox" :key="item.news_id"></td>
+              <td @click="goDetail(item.news_id)">{{ item.title }}</td>
+              <td>{{ item.created_at }}</td>
 
-        <!-- 정보 영역 -->
-        <div class="info">
-          <h3>{{ item.title }}</h3>
-          <p>{{ item.description }}</p>
-          <p>ID: {{ item.news_id }}</p>
-
-          <!-- 액션 버튼 -->
-          <div class="actions">
-            <!-- 수정 페이지 이동 -->
-            <router-link :to="`/news/update/${item.news_id}`">
-              수정
-            </router-link>
-
-            <!-- 삭제 버튼 -->
-            <button
-              type="button"
-              class="del-button"
-              @click="handleDelete(item.news_id)"
+              <!-- 액션 영역 -->
+              <!-- 수정 페이지 이동 -->
+              <td>
+              <button
+              @click="goUpdate(item.news_id)"
               >
-              {{ deletingId === item.news_id ? "삭제 중..." : "삭제" }}
-            </button>
-          </div>
-        </div>
+                수정
+              </button>
+              </td>
+              <!-- 삭제 버튼 -->
+              <td>
+                <button
+                  type="button"
+                  class="del-button"
+                  @click="handleDelete(item.news_id)"
+                  >
+                  {{ deletingId === item.news_id ? "삭제 중..." : "삭제" }}
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
       </article>
     </div>
 
     <!-- 신규 등록 버튼 -->
-    <router-link to="/news/create">등록하기</router-link>
+    <button @click="goCreate">
+      등록
+    </button>
   </section>
 
 </template>
@@ -64,6 +71,10 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import { NewsApi } from "@/api/news";
+import { useRouter } from 'vue-router';
+
+// 라우터 변수 선언
+const router = useRouter();
 
 // 상태 관리 변수
 const items = ref([]);           // 목록 데이터
@@ -123,5 +134,20 @@ const handleDelete = async (newsId) => {
         // deletingId null 처리
         deletingId.value = null;
     }
+}
+
+// 공지사항 작성 페이지 이동 함수 정의
+const goCreate = () => {
+  router.push('/news/create');
+}
+
+// 특정 게시물 페이지 이동 함수 정의
+const goDetail = (newsId) => {
+  router.push(`/news/${newsId}`);
+}
+
+// 특정 게시물 수정 페이지 이동 함수 정의
+const goUpdate = (newsId) => {
+  router.push(`/news/update/${newsId}`);
 }
 </script>
