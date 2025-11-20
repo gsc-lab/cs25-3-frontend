@@ -29,6 +29,7 @@
             <tr
               v-for="item in items"
               :key="item.news_id"
+              style="text-align: center;"
               class="card"
             >
               <td><input type="checkbox" :key="item.news_id"></td>
