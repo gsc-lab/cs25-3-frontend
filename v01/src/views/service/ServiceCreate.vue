@@ -40,6 +40,7 @@
           제출
         </SubmitButton>
         <button
+          type="button"
           @click="goList"
         >
           목록
