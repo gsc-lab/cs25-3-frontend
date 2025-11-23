@@ -16,7 +16,7 @@
     <div v-else class="list">
       <article>
         <table>
-          <thead>
+          <thead> 
             <tr>
               <th>선택</th>
               <th>제목</th>
