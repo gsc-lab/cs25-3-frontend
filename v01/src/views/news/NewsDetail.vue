@@ -1,7 +1,9 @@
 <template>
   <article>
     <h2>공지사항 보기</h2>
-    <div class="notice">
+
+    <p v-if="isLoading">불러오는 중...</p>
+    <div v-else class="notice">
       <fieldset>
         <!-- 제목 -->
         <p><label>제목: </label>{{ item.title }}</p>
