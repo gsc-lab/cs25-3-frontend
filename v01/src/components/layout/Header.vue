@@ -3,7 +3,7 @@
     <!-- 로고 -->
     <router-link to="/" class="logo">kimhadiii Salon</router-link>
 
-    <!-- 햄버거 아이콘 (모바일 전용) -->
+    <!-- 햄버거 아이콘 -->
     <button class="hamburger" @click="menuOpen = !menuOpen">
       <span :class="{ open: menuOpen }"></span>
       <span :class="{ open: menuOpen }"></span>
@@ -157,7 +157,7 @@ const onLogout = async () => {
   cursor: pointer;
 }
 
-/* -------------------- 모바일 햄버거 버튼 -------------------- */
+/* -- 모바일 햄버거 버튼 -- */
 .hamburger {
   display: none;
   flex-direction: column;
@@ -186,7 +186,7 @@ const onLogout = async () => {
   transform: translateY(-7px) rotate(-45deg);
 }
 
-/* -------------------- 모바일 반응형 -------------------- */
+/* -- 모바일 반응형 -- */
 @media (max-width: 960px) {
   .hamburger {
     display: flex;
