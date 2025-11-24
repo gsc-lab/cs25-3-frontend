@@ -4,10 +4,12 @@ import { defineStore } from "pinia";
 export const useUserStore = defineStore("user", {
   // 상태(state): 실제 데이터 저장
   state: () => ({
-    // 로그인한 사용자 정보 저장
-    // 로그인 시: { user_id, account, role, user_name }
-    // 로그아웃 시: null
-    user: null,
+    user: {
+      user_id: 0,
+      account: "guest",
+      role: "guest",
+      user_name: "guest",
+    },
   }),
 
   persist: {
@@ -23,7 +25,12 @@ export const useUserStore = defineStore("user", {
 
     // 로그아웃 시 user 삭제
     logout() {
-      this.user = null;
+      this.user = {
+        user_id : 0,
+        account : 'guest',
+        role : 'guest',
+        user_name : 'guest'
+      };
     },
   },
 });
