@@ -10,7 +10,6 @@
           name="title"
           placeholder="예: 여성 커트"
           v-model="title"
-          :error="fieldErrorTitle"
           autocomplete="off"
         />
       </div>
@@ -34,25 +33,31 @@
       <!-- 백엔드에서 받은 에러 메시지 -->
       <p v-if="errorMessage" class="error">{{ errorMessage }}</p>
 
-      <!-- 성공 메시지 -->
-      <p v-if="successMessage" class="success">{{ successMessage }}</p>
-
       <SubmitButton :loading="isSubmitting">
         등록하기
       </SubmitButton>
+      <!-- 목록 이동 버튼 -->
+      <button
+        type="button"
+        @click="goList"
+      >
+        목록
+      </button>
     </form>
-
-    <router-link to="/hairstyle">목록</router-link>
   </section>
 </template>
 
 <script setup>
 import { ref } from "vue";
+import { useRouter } from "vue-router";
 import { HairstyleApi } from "@/api/hairstyle";
 import FormField from "@/components/FormField.vue";
 import SubmitButton from "@/components/SubmitButton.vue";
 
 const emit = defineEmits(["created"]);
+
+// 라우터 객체 생성
+const router = useRouter();
 
 // 입력값 및 상태
 const title = ref("");            // 제목
@@ -123,7 +128,12 @@ const handleSubmit = async () => {
     description.value = "";
     imageFile.value = null;
 
+    // 등록이 완료되었을 경우
+    // 헤어스타일 목록으로 이동
     successMessage.value = "헤어스타일이 등록되었습니다.";
+    alert(successMessage.value);
+    router.push('/hairstyle');
+
   } catch (e) {
     // 백엔드 메시지만 사용
     const msg = e.response?.data?.error?.message ?? "";
@@ -133,4 +143,9 @@ const handleSubmit = async () => {
     isSubmitting.value = false;
   }
 };
+
+// 헤어스타일 목록 페이지 이동 함수
+const goList = () => {
+  router.push('/hairstyle');
+}
 </script>
