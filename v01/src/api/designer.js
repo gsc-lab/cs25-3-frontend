@@ -11,8 +11,8 @@ export const DesignerApi = {
                 "GET",
                 "/designer"
             );
-            // success, data
-            return res.data;
+            // header, status, data
+            return res;
         } catch(e) {
             console.log(e);
             throw e;
@@ -24,18 +24,18 @@ export const DesignerApi = {
             "GET",
             `/designer/${encodeURIComponent(designer_id)}`
         );
-        // success, data
-        return res.data;
+        // header, status, data
+        return res;
     },
     // 등록하기
-    async register(payload) {
+    async create(formData) {
         const res = await request(
             "POST",
             "/designer/create",
-            payload
+            formData
         );
-        // success, data
-        return res.data;
+        // header, status, data
+        return res;
     },
     // 수정하기
     async update(designer_id, payload) {
@@ -44,15 +44,25 @@ export const DesignerApi = {
             `/designer/update/${encodeURIComponent(designer_id)}`,
             payload
         );
-        // success, data
-        return res.data;
+        // header, status, data
+        return res;
+    },
+    // 이미지 
+    async updateFile(designer_id, formData) {
+        const res = await request(
+            "POST",
+            `/designer/file/${encodeURIComponent(designer_id)}`,
+            formData
+        );
+        // header, status, data
+        return res;
     },
     // 삭제 하기
     async delete(designer_id) {
         const res = await request("DELETE",
             `/designer/delete/${encodeURIComponent(designer_id)}`
         );
-        // 백엔드에서 넘겨주는 http_response_code 번호 반환
-        return res.status;
+        // header, status, data
+        return res;
     },
 }
