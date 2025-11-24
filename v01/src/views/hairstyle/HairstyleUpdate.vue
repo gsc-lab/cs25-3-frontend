@@ -27,7 +27,7 @@
 
       <!-- 현재 이미지 -->
       <div class="field">
-        <label>현재 이미지</label>
+        <p>미리보기</p>
 
         <div v-if="currentImage" class="preview">
           <img :src="currentImage" alt="current" />
@@ -38,22 +38,19 @@
 
       <!-- 이미지 변경 -->
       <div class="field">
-        <label>이미지 변경</label>
+        <label>이미지: </label>
         <input type="file" accept="image/*" @change="handleImageChange" />
       </div>
 
       <!-- 에러 메시지 -->
       <p v-if="errorMessage" class="error">{{ errorMessage }}</p>
 
-      <!-- 성공 메시지 -->
-      <p v-if="successMessage" class="success">{{ successMessage }}</p>
-
       <SubmitButton :loading="isSubmitting">
         수정하기
       </SubmitButton>
 
       <button type="button" class="secondary" @click="goBack">
-        목록으로
+        목록
       </button>
     </form>
   </section>
@@ -177,7 +174,11 @@ const handleSubmit = async () => {
       newImageFile.value = null;  // newImageFile는 null 처리
     }
 
+    // 수정이 완료되었을 경우
+    // 헤어스타일 목록으로 이동
     successMessage.value = "수정이 완료되었습니다.";
+    alert(successMessage.value);
+    router.push('/hairstyle');
   } catch (err) {
     errorMessage.value = err?.response?.data?.error?.message ?? "";
   } finally {

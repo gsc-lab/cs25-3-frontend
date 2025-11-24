@@ -14,7 +14,20 @@ const client = axios.create({
 // 에러 원본 그대로 던지기
 client.interceptors.response.use(
   (res) => res,
-  (err) => Promise.reject(err)
+  (err) => {
+    const status = err.response?.status;
+    const body = err.response?.data;
+
+    // status가 401일 경우
+    if (status === 401) {
+      alert(body?.error?.message ?? '로그인이 필요합니다.');
+      router.push('/login');  // 로그인 페이지 이동
+    } else if (status === 403) {   // status가 403일 경우
+      alert(body?.error?.message ?? '접근 권한이 없습니다.');
+    }
+
+    return Promise.reject(err);
+  }
 );
 
 // 공통 request 헬퍼 -> 성공 시 data만 반환
