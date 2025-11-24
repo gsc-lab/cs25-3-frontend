@@ -24,7 +24,6 @@
             v-if="item.image"
             :src="item.image"
             :alt="item.title"
-            @error="onImageError($event)"
           />
           <div v-else class="no-image">이미지 없음</div>
         </div>
@@ -36,11 +35,17 @@
           <p class="meta">ID: {{ item.hair_id }}</p>
 
           <!-- 액션 버튼들 -->
-          <div class="actions">
+          <div 
+            v-if="userStore.user.role === 'manager'"
+            class="actions"
+          >
             <!-- 수정 페이지 이동 -->
-            <router-link :to="`/hairstyle/update/${item.hair_id}`">
+            <button
+              type="button"
+              @click="goUpdate(item.hair_id)"
+            >
               수정
-            </router-link>
+            </button>
 
             <!-- 삭제 버튼 -->
             <button
@@ -56,14 +61,30 @@
       </article>
     </div>
 
+    <hr>
+
     <!-- 신규 등록 버튼 -->
-    <router-link to="/hairstyle/create">등록하기</router-link>
+    <button
+      v-if="userStore.user.role === 'manager'"
+      type="button"
+      @click="goCreate"
+    >
+      등록
+    </button>
   </section>
 </template>
 
 <script setup>
 import { ref, onMounted } from "vue";
+import { useRouter } from "vue-router";
 import { HairstyleApi } from "@/api/hairstyle";
+import { useUserStore } from "@/stores/user";
+
+// userStore 객체 생성
+const userStore = useUserStore();
+
+// 라우터 생성
+const router = useRouter();
 
 // 상태 관리 변수
 const items = ref([]);           // 목록 데이터
@@ -122,4 +143,14 @@ const handleDelete = async (hairId) => {
     deletingId.value = null;
   }
 };
+
+// 헤어스타일 등록 페이지 이동 함수
+const goCreate = () => {
+  router.push('/hairstyle/create');
+}
+
+// 헤어스타일 수정 페이지 이동 함수
+const goUpdate = (hairstyle_id) => {
+  router.push(`/hairstyle/update/${hairstyle_id}`)
+}
 </script>
