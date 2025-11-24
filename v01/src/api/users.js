@@ -23,4 +23,8 @@ export const UsersApi = {
   remove(account) {
     return request("DELETE", `/users/delete/${encodeURIComponent(account)}`)
   },
+  // 로그아웃
+  logout() {
+    return request("DELETE", "users/logout")
+  },
 }
