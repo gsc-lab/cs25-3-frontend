@@ -24,6 +24,7 @@
             v-if="item.image"
             :src="item.image"
             :alt="item.title"
+            style="width: 300px; object-fit: cover;"
           />
           <div v-else class="no-image">이미지 없음</div>
         </div>
