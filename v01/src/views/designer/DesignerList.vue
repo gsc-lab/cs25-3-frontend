@@ -24,15 +24,17 @@
       <p>메시지: {{ item.message }}</p>
       <p></p>
 
-      <div v-if="userStore.user.user_id === item.user_id" class="button">
+      <div class="button">
         <!-- 수정 버튼 -->
         <button
+          v-if="userStore.user.user_id === item.user_id"
           type="button"
           @click="goUpdate(item.designer_id)"
         >
           수정
         </button>
         <button
+          v-if="userStore.user.role === 'manager'"
           type="button"
           @click="handleDelete(item.designer_id)"
         >
@@ -107,6 +109,11 @@ onMounted(fetchList);
 
 // 디자이너 삭제 함수
 const handleDelete = async (designer_id) => {
+  // 삭제 시도
+  const ok = confirm("해당 디자이너 정보를 삭제하시겠습니까?");
+  // 취소할 경우
+  if (!ok) return;
+
   // 오류 메시지 초기화
   errorServerMsg.value = "";
 
