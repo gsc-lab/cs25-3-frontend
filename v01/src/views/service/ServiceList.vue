@@ -5,11 +5,19 @@
     <table style="text-align: center">
       <thead>
         <tr>
-          <th>선택</th>
+          <th
+            v-if="userStore.user.role === 'manager'"
+          >
+            선택
+          </th>
           <th>서비스</th>
           <th>가격</th>
           <th>소요시간</th>
-          <th>편집</th>
+          <th
+            v-if="userStore.user.role === 'manager'"
+          >
+            편집
+          </th>
         </tr>
       </thead>
       <tbody>
@@ -17,11 +25,18 @@
           v-for="item in items"
           :key="item.service_id"
         >
-          <td><input type="checkbox" :key="item.service_id"></td>
+          <td
+            v-if="userStore.user.role === 'manager'"
+          >
+            <input type="checkbox" :key="item.service_id">
+          </td>
           <td>{{ item.service_name }}</td>
           <td>{{ item.price }}</td>
           <td>{{ item.duration_min }}</td>
-          <td colspan="2">
+          <td
+            v-if="userStore.user.role === 'manager'"
+            colspan="2"
+          >
             <button @click="goUpdate(item.service_id)">
               수정
             </button>
@@ -37,7 +52,10 @@
     </table>
   </article>
   <!-- 등록 페이지 이동 -->
-  <button @click="goCreate">
+  <button
+    v-if="userStore.user.role === 'manager'"
+    @click="goCreate"
+  >
     등록
   </button>
 
@@ -46,10 +64,14 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
+import { useUserStore } from '@/stores/user';
 import { ServiceApi } from '@/api/service';
 
 // 라우터 생성
 const router = useRouter();
+
+// 사용자 정보 가져오기
+const userStore = useUserStore();
 
 // 상태 관리 변수
 const items = ref({});           // 서비스 정보
@@ -105,9 +127,9 @@ const handleDelete = async (serviceId) => {
     const res = await ServiceApi.delete(serviceId);
     const status = res.status;
 
-    // response.status가 200이 아닌 경우
+    // response.status가 204이 아닌 경우
     // 오류 메시지 alert 표시
-    if (status !== 200) {
+    if (status !== 204) {
       throw new Error("삭제 요청이 정상적으로 처리되지 않았습니다.");
     }
 
@@ -115,7 +137,7 @@ const handleDelete = async (serviceId) => {
     items.value = items.value.filter(item => item.service_id !== serviceId);
 
     // 삭제 성공 시
-    alert(res.data?.message);
+    alert("삭제 완료하였습니다.");
   } catch(e) {
     // 서버 오류 메시지 반환
     const msg = e.response?.error?.data?.error?.message;
