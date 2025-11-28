@@ -170,10 +170,10 @@ const handleUpdate = async () => {
     // 파일을 업로드 했을 경우 updateFile 호출
     if (newFile.value) {
       const formData = new FormData()
-      formData.append('file', newFile.value)
+      formData.append('image', newFile.value)
 
       // 파일 업로드
-      const resFile = await NewsApi.updateFile(newsId, formData);
+      const resFile = await NewsApi.updateImage(newsId, formData);
       const bodyFile = resFile.data
 
       // response.data.success가 false인 경우
@@ -188,8 +188,7 @@ const handleUpdate = async () => {
     router.push('/news')
   } catch (e) {
     // 서버 오류 출력
-    errorServerMsg.value = e.message ?? '서버에 오류가 발생했습니다.'
-    console.log(e);
+    errorServerMsg.value = e.response?.data?.error?.message || e.message;
     alert(errorServerMsg.value)
   } finally {
     // isSubmitting 비활성화

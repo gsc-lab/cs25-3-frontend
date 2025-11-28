@@ -101,7 +101,7 @@ const handleSubmit = async () => {
     formData.append('content', items.content);
     // 만약 items.file이 있다면 formData 객체에 저장
     if (items.file) {
-      formData.append('file', items.file);
+      formData.append('image', items.file);
     }
 
     // 백엔드로 보내기
