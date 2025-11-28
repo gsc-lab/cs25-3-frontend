@@ -15,7 +15,12 @@
         <p v-if="item.updated_at"><label>수정일: </label>{{ item.updated_at }}</p>
 
         <!-- 이미지 -->
-        <img v-if="item.file" :src="item.file" alt="이미지 오류">
+        <img
+          v-if="item.file"
+          :src="item.file"
+          alt="이미지 오류"
+          style="width: 500px;"
+        >
 
         <!-- 내용 -->
         <p>{{ item.content }}</p>
