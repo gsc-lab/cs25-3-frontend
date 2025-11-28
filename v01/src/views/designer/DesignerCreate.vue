@@ -54,6 +54,7 @@
           v-if="previewURL"
           :src="previewURL"
           alt="이미지 없음"
+          style="width: 500px;"
         >
 
       </fieldset>

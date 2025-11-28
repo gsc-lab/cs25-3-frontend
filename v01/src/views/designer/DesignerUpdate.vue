@@ -43,7 +43,7 @@
         <FormField
           label="이미지:"
           type="file"
-          name="file"
+          name="image"
           @change="handleImgChange"
         /><br>
 
@@ -157,7 +157,7 @@ const handleUpdate = async () => {
   isSubmitting.value = true;
 
   try {
-    // 텍스트 수정
+    // 1) 텍스트 수정
     const payload = {
       experience: experience.value,
       good_at: good_at.value,
@@ -165,50 +165,40 @@ const handleUpdate = async () => {
       message: message.value,
     };
 
-    // DesignerApi.update(designerId, payload)
     const res = await DesignerApi.update(designerId, payload);
     const body = res.data;
 
-    // response.data.success가 false인 경우
-    // 에러 메시지 던지기
     if (!body?.success) {
       throw new Error(body?.error?.message);
     }
 
-    // 이미지 수정
+    // 2) 이미지 수정 (이미지를 새로 선택한 경우에만)
     if (imageFile.value) {
-      // formData 객체 생성
       const formData = new FormData();
-
-      // image 값 formData 객체에 저장
       formData.append('image', imageFile.value);
 
-      // DesignerApi.updateFile(designerId, formData)
-      const resImg = await DesignerApi.updateFile(designerId, formData);
+      const resImg = await DesignerApi.updateImage(designerId, formData);
       const bodyImg = resImg.data;
 
-      // response.data.success가 false인 경우
-      // 에러 메시지 던지기
       if (!bodyImg?.success) {
         throw new Error(bodyImg?.error?.message);
       }
     }
 
-    // 수정이 완료되었을 경우
-    // 디자이너 목록으로 이동
+    // 3) 완료 후 이동
     alert('디자이너 정보가 수정되었습니다.');
     router.push('/designer');
 
   } catch (e) {
-    // 서버 오류 메시지 출력
-    errorServerMsg.value = e.response?.data?.error?.message || e.message;;
+    errorServerMsg.value =
+      e.response?.data?.error?.message || e.message;
     alert(errorServerMsg.value);
 
   } finally {
-    // isSubmitting 비활성화
     isSubmitting.value = false;
   }
 };
+
 
 // 디자이너 목록 이동 함수 정의
 const goList = () => {
