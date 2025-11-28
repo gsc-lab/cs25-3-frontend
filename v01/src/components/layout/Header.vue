@@ -56,11 +56,12 @@ const navItems = [
   { to: '/service', label: 'SERVICE' },
   { to: '/hairstyle', label: 'HAIR STYLE' },
   { to: '/designer', label: 'DESIGNER' },
-  { to: '/bookings', label: 'BOOKINGS' },
+  { to: '/reservation', label: 'RESERVATION' },
   { to: '/news', label: 'NEWS' },
   { to: '/mypage', label: 'MYPAGE' }
-]
+];
 
+// 로그아웃
 const onLogout = async () => {
   const isLogout = confirm('정말 로그아웃하시겠습니까?')
   if (!isLogout) return
@@ -70,7 +71,8 @@ const onLogout = async () => {
 
   // userStore에서 로그아웃
   userStore.logout()
-  router.push('/users/login')
+  alert("로그아웃이 완료되었습니다.")
+  router.push('/')
 }
 </script>
 
