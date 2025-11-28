@@ -1,6 +1,6 @@
 <template>
   <section class="page">
-    <h1 class="title">회원가입</h1>
+    <h2 class="title">회원가입</h2>
 
     <form class="form" @submit.prevent="onSubmit">
       <!-- ROLE -->
