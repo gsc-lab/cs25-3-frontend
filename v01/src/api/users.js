@@ -4,27 +4,45 @@ import { request } from "./client"
 // users API
 export const UsersApi = {
   // 회원가입
-  register(payload) {
-    return request("POST", "/users/create", payload)
+  async register(payload) {
+    const res = await request("POST", "/users/create", payload);
+    return res;
   },
+  
   // 로그인
-  login(payload) {
-    return request("POST", "/users/login", payload)
+  async login(payload) {
+    const res = await request("POST", "/users/login", payload);
+    return res;
   },
+
   // 특정 사용자 정보 조회
-  detail(account) {
-    return request("GET", `/users/detail/${encodeURIComponent(account)}`)
+  async detail(account) {
+    const res = await request("GET", `/users/detail/${encodeURIComponent(account)}`);
+    return res;
   },
+
   // 사용자 정보 수정
-  update(account, payload) {
-    return request("PUT", `/users/update/${encodeURIComponent(account)}`, payload)
+  async update(account, payload) {
+    const res = await request(
+      "PUT",
+      `/users/update/${encodeURIComponent(account)}`,
+      payload
+    );
+    return res;
   },
+
   // 사용자 삭제
-  remove(account) {
-    return request("DELETE", `/users/delete/${encodeURIComponent(account)}`)
+  async remove(account) {
+    const res = await request(
+      "DELETE",
+      `/users/delete/${encodeURIComponent(account)}`
+    );
+    return res;
   },
+
   // 로그아웃
-  logout() {
-    return request("DELETE", "users/logout")
+  async logout() {
+    const res = await request("POST", "/users/logout");
+    return res;
   },
 }
