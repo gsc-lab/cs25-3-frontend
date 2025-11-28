@@ -2,7 +2,7 @@
 import { request } from './client';
 
 // news API
-export const NewsAPI = {
+export const NewsApi = {
     // 전체 보기
     async list() {
         const res = await request(
@@ -18,8 +18,8 @@ export const NewsAPI = {
             "GET",
             `/news/${encodeURIComponent(news_id)}`
         );
-        // success, data
-        return res.data;
+        // header, status, data
+        return res;
     },
     // 작성하기
     async create(payload) {
@@ -29,7 +29,7 @@ export const NewsAPI = {
             payload
         );
         // success, data
-        return res.data;
+        return res;
     },
     // 수정하기
     async update(news_id, payload) {
@@ -37,8 +37,17 @@ export const NewsAPI = {
             "PUT",
             `/news/update/${encodeURIComponent(news_id)}`,
             payload);
-        // success, data
-        return res.data;
+        // header, status, data
+        return res;
+    },
+    // 파일 수정하기
+    async updateImage(news_id, formData) {
+        const res = await request(
+            "POST",
+            `/news/image/${encodeURIComponent(news_id)}`,
+            formData);
+        // header, status, data
+        return res;
     },
     // 삭제하기
     async delete(news_id) {
@@ -49,4 +58,12 @@ export const NewsAPI = {
         // 백엔드에서 보내는 http_response_code 번호 반환
         return res.status;
     },
+    // 메인 페이지 최신
+    async mainNews(limit = 3) {
+        const res = await request(
+            "GET",
+            `/news?limit=${limit}`
+        );
+        return res;
+    }
 }
