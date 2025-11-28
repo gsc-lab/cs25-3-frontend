@@ -18,10 +18,19 @@
         <table>
           <thead> 
             <tr>
-              <th>선택</th>
+              <th
+                v-if="userStore.user.role === 'manager'"
+              >
+                선택
+              </th>
               <th>제목</th>
               <th>작성일</th>
-              <th colspan="2">편집</th>
+              <th
+                v-if="userStore.user.role === 'manager'"
+                colspan="2"
+              >
+                편집
+              </th>
             </tr>
           </thead>
           <!-- 정보 영역 -->
@@ -32,29 +41,35 @@
               style="text-align: center;"
               class="card"
             >
-              <td><input type="checkbox" :key="item.news_id"></td>
+              <td
+                v-if="userStore.user.role === 'manager'"
+              >
+                <input type="checkbox" :key="item.news_id">
+              </td>
               <td @click="goDetail(item.news_id)">{{ item.title }}</td>
               <td>{{ item.created_at }}</td>
 
               <!-- 액션 영역 -->
-              <!-- 수정 페이지 이동 -->
-              <td>
-              <button
-              @click="goUpdate(item.news_id)"
+              <td
+                v-if="userStore.user.role === 'manager'"
               >
-                수정
-              </button>
-              </td>
-              <!-- 삭제 버튼 -->
-              <td>
+                <!-- 수정 페이지 이동 -->
+                <button
+                @click="goUpdate(item.news_id)"
+                >
+                  수정
+                </button>
+
+                <!-- 삭제 버튼 -->
                 <button
                   type="button"
                   class="del-button"
                   @click="handleDelete(item.news_id)"
-                  >
+                >
                   {{ deletingId === item.news_id ? "삭제 중..." : "삭제" }}
                 </button>
               </td>
+              
             </tr>
           </tbody>
         </table>
@@ -62,7 +77,11 @@
     </div>
 
     <!-- 신규 등록 버튼 -->
-    <button @click="goCreate">
+    <button
+      v-if="userStore.user.role === 'manager'"
+      type="button"
+      @click="goCreate"
+    >
       등록
     </button>
   </section>
@@ -73,9 +92,13 @@
 import { ref, onMounted } from 'vue';
 import { NewsApi } from "@/api/news";
 import { useRouter } from 'vue-router';
+import { useUserStore } from '@/stores/user';
 
 // 라우터 변수 선언
 const router = useRouter();
+
+// 사용자 정보 변수 저장
+const userStore = useUserStore();
 
 // 상태 관리 변수
 const items = ref([]);           // 목록 데이터
