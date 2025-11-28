@@ -87,6 +87,7 @@ const fetchList = async () => {
   try {
     // 세부 정보 불러오기
     const res = await ServiceApi.show(serviceId);
+    const body = res.data;
     const status = res.status;
 
     // http_response_code가 200이 아닐 경우
@@ -96,12 +97,10 @@ const fetchList = async () => {
     }
 
     // 불러오기 성공했을 경우
-    // item에 현재 정보 저장
-    const item = res.data?.data;
-    
-    service_name.value = item.service_name;
-    price.value = item.price;
-    duration_min.value = item.duration_min;
+    const service = body?.data;
+    service_name.value = service.service_name;
+    price.value = service.price;
+    duration_min.value = service.duration_min;
   } catch(e) {
     // 서버 에러 메시지 console 출력
     errorServerMsg.value = e.response?.data?.error?.message;
