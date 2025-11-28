@@ -64,4 +64,12 @@ export const HairstyleApi = {
     // 백엔드에서 넘겨주는 http_response_code 번호 반환
     return res.status;
   },
+  // 메인 페이지 최신
+  async mainHairstyle(limit = 6) {
+    const res = await request(
+      "GET",
+      `/hairstyle?limit=${limit}`
+    );
+    return res;
+  },
 };
