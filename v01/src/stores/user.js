@@ -1,8 +1,7 @@
 import { defineStore } from "pinia";
 
-// 전역에서 로그인 상태를 관리하는 user 스토어 정의
+// 로그인 상태를 절대 브라우저에 저장하지 않는 userStore
 export const useUserStore = defineStore("user", {
-  // 상태(state): 실제 데이터 저장
   state: () => ({
     user: {
       user_id: 0,
@@ -13,24 +12,28 @@ export const useUserStore = defineStore("user", {
   }),
 
   persist: {
-    storage: localStorage, // or sessionStorage
+    storage: localStorage,
   },
 
-  // 동작(actions): 상태 변경 함수
   actions: {
-    // 로그인 성공 시 user 데이터 저장
+    // 로그인 성공 시
     setUser(user) {
       this.user = user;
     },
 
-    // 로그아웃 시 user 삭제
+    // 프론트 로그아웃 시 (Pinia 상태 초기화)
     logout() {
       this.user = {
-        user_id : 0,
-        account : 'guest',
-        role : 'guest',
-        user_name : 'guest'
+        user_id: 0,
+        account: "guest",
+        role: "guest",
+        user_name: "guest",
       };
     },
+
+    // 세션 만료 등 강제 초기화
+    reset() {
+      this.logout();
+    }
   },
 });
