@@ -1,6 +1,35 @@
 <template>
   <div class="page">
-    <h2>RESERVATION</h2>
+    <h2 style="text-align: center;">RESERVATION</h2>
+
+    <h3>디자이너 휴무일</h3>
+    <div class="timeoff-list">
+      <!-- timeoff table -->
+      <table class="timeoff-table">
+        <thead>
+          <tr>
+            <th>번호</th>
+            <th>이름</th>
+            <th>시작</th>
+            <th>종료</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-if="timeoffs.length === 0">
+            <td colspan="4">등록된 휴무 정보가 없습니다.</td>
+          </tr>
+          <tr
+            v-for="(to, index) in timeoffs"
+            :key="to.to_id"
+          >
+            <td>{{ index + 1 }}</td>
+            <td>{{ to.user_name }}</td>
+            <td>{{ to.start_at }}</td>
+            <td>{{ to.end_at }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
 
     <form @submit.prevent="handleSubmit" class="items">
       <!-- 디자이너 선택 -->
@@ -8,6 +37,7 @@
         <label>디자이너</label>
         <select
           v-model="items.designer_id"
+          @change="designerDetail"
         >
           <option value="">선택</option>
           <option
@@ -18,6 +48,33 @@
             {{ designer.user_name }}
           </option>
         </select>
+
+        <!-- 선택된 디자이너의 예약 현황 테이블 -->
+        <table
+          v-if="items.designer_id"
+        >
+          <thead>
+            <tr>
+              <th>번호</th>
+              <th>디자이너</th>
+              <th>날짜</th>
+              <th>시간</th>
+              <th>상태</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr
+              v-for="(rv, index) in reservations"
+              :key="rv.reservation_id"
+            >
+              <td>{{ index + 1 }}</td>
+              <td>{{ rv.designer_name }}</td>
+              <td>{{ rv.day }}</td>
+              <td>{{ rv.start_at }} ~ {{ rv.end_at }}</td>
+              <td>{{ rv.status }}</td>
+            </tr>
+          </tbody>
+        </table>
       </div>
 
       <!-- 날짜 선택 -->
@@ -69,7 +126,7 @@
 
       <!-- 버튼 -->
       <div class="items-row buttons">
-        <!-- 예약하기 -->
+        <!-- 예약 버튼 -->
         <SubmitButton>
           예약하기
         </SubmitButton>
@@ -92,6 +149,7 @@ import { useRouter } from "vue-router";
 import { ReservationApi } from "@/api/reservation";
 import { ServiceApi } from "@/api/service";
 import { DesignerApi } from "@/api/designer";
+import { TimeoffApi } from '@/api/timeoff';
 import { useUserStore } from "@/stores/user";
 import SubmitButton from "@/components/SubmitButton.vue";
 
@@ -121,12 +179,18 @@ const items = ref({
 // 상태 관리 변수
 const services = ref([]);
 const designers = ref([]);
+const reservations = ref([]);
+const timeoffs = ref([]);
 const isSubmitting = ref(false);
 const errorServerMsg = ref("");
 
 // 서비스 / 디자이너 목록 불러오기
 const fetchList = async () => {
   try {
+    // 휴무 정보 가져오기
+    const bodyTimeoff = await TimeoffApi.list();
+    timeoffs.value = bodyTimeoff?.data?.timeoff;
+
     // 서비스 정보 가져오기
     const resService = await ServiceApi.list();
     const bodyService = resService.data;
@@ -136,6 +200,7 @@ const fetchList = async () => {
     const resDesigner = await DesignerApi.list();
     const bodyDesigner = resDesigner.data;
     designers.value = bodyDesigner?.data?.designer;
+
   } catch(e) {
     // 서버 오류 저장
     console.error(e);
@@ -199,14 +264,24 @@ const handleSubmit = async () => {
     // 예약 목록 페이지 이동
     router.push("/mypage");
   } catch (e) {
-    // 서버 오류 저장
+    // 서버 오류 메시지 출력
     console.error(e);
-    errorServerMsg.value = "예약에 실패했습니다.";
+    errorServerMsg.value = e?.response?.data?.error?.message;
     alert(errorServerMsg.value);
   } finally {
     // isSubmitting 비활성화
     isSubmitting.value = false;
   }
+}
+
+// 특정 디자이너 예약 정보 불러오기
+const designerDetail = async () => {
+  // ReservationApi.designerDetail(user_id.value)
+  const res = await ReservationApi.designerDetail(items.value.designer_id);
+  const body = res.data;
+
+  // reservations 변수에 불러온 정보 저장
+  reservations.value = body?.data?.reservation;
 }
 
 // 마이페이지 이동 함수
@@ -218,36 +293,143 @@ const goList = () => {
 
 <style scoped>
 .page {
-  max-width: 640px;
-  margin: 0 auto;
+  max-width: 1200px;
+  margin: 40px auto;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    "Noto Sans KR", sans-serif;
+  font-size: 14px;
+  color: #333;
 }
+
+.page > h2 {
+  font-size: 23px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.page h3 {
+  font-size: 16px;
+  font-weight: 600;
+  margin: 20px 0 10px;
+}
+
+p[v-if="isLoading"] {
+  margin: 10px 0;
+}
+
+.timeoff-list {
+  margin-bottom: 24px;
+}
+
+.timeoff-table,
+.items table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 8px;
+  font-size: 14px;
+}
+
+.timeoff-table th,
+.timeoff-table td,
+.items table th,
+.items table td {
+  border: 1px solid #ddd;
+  padding: 8px 10px;
+  text-align: center;
+}
+
+.timeoff-table thead,
+.items table thead {
+  background-color: #f5f5f5;
+}
+
+.timeoff-table tbody tr:nth-child(even),
+.items table tbody tr:nth-child(even) {
+  background-color: #fafafa;
+}
+
 .items {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 16px;
+  padding: 16px 20px;
+  border: 1px solid #eee;
+  border-radius: 8px;
+  background-color: #fafafa;
 }
+
 .items-row {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 6px;
 }
+
+.items-row > label {
+  font-weight: 600;
+}
+
+.items-row input[type="date"],
+.items-row input[type="time"],
+.items-row select,
+.items-row textarea {
+  padding: 6px 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 14px;
+  max-width: 260px;
+}
+
+.items-row textarea {
+  min-height: 80px;
+  max-width: 100%;
+}
+
 .service-list {
   display: flex;
   flex-direction: column;
   gap: 4px;
 }
+
 .service-item {
   font-size: 14px;
 }
-textarea {
-  min-height: 80px;
-}
+
 .buttons {
   flex-direction: row;
   gap: 8px;
   align-items: center;
 }
+
+.buttons > button {
+  padding: 8px 14px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  background-color: #fff;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.buttons > button:hover {
+  background-color: #f0f0f0;
+}
+
 .errorServerMsg {
-  color: red;
+  color: #d9534f;
+  font-size: 13px;
+}
+
+@media (max-width: 600px) {
+  .page {
+    padding: 0 10px;
+  }
+
+  .items-row input[type="date"],
+  .items-row input[type="time"],
+  .items-row select {
+    max-width: 100%;
+  }
 }
 </style>
+
