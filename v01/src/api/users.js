@@ -16,26 +16,26 @@ export const UsersApi = {
   },
 
   // 특정 사용자 정보 조회
-  async detail(account) {
-    const res = await request("GET", `/users/detail/${encodeURIComponent(account)}`);
+  async detail() {
+    const res = await request("GET", "/users");
     return res;
   },
 
   // 사용자 정보 수정
-  async update(account, payload) {
+  async update(payload) {
     const res = await request(
       "PUT",
-      `/users/update/${encodeURIComponent(account)}`,
+      "/users/update",
       payload
     );
     return res;
   },
 
   // 사용자 삭제
-  async remove(account) {
+  async delete() {
     const res = await request(
       "DELETE",
-      `/users/delete/${encodeURIComponent(account)}`
+      "/users/delete"
     );
     return res;
   },
