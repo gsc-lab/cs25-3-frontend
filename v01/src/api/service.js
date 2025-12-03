@@ -11,22 +11,36 @@ export const ServiceApi = {
                 "GET",
                 "/service"
             );
-            // success, data
-            return res.data;
+            // data, status, header, ...
+            return res;
+        } catch(e) {
+          console.log(e);
+          throw e;
+        }
+    },
+    // 세부 보기
+    async show(service_id) {
+        try {
+            const res = await request(
+                "GET",
+                `/service/${service_id}`
+            );
+            // data, status, header, ...
+            return res;
         } catch(e) {
             console.log(e);
-            throw e;
+            throw(e);
         }
     },
     // 등록하기
-    async register(payload) {
+    async create(payload) {
         const res = await request(
             "POST",
             "/service/create",
             payload
         );
-        // success, data
-        return res.data;
+        // data, status, header, ...
+        return res;
     },
     // 수정하기
     async update(service_id, payload) {
@@ -36,7 +50,7 @@ export const ServiceApi = {
             payload
         );
         // success, data
-        return res.data;
+        return res;
     },
     // 삭제하기
     async delete(service_id) {
@@ -44,7 +58,7 @@ export const ServiceApi = {
             "DELETE",
             `/service/delete/${encodeURIComponent(service_id)}`
         );
-        // 백엔드에서 보내는 http_response_code 번호 반환
-        return res.status;
+        // data, status, header, ...
+        return res;
     },
 }

@@ -1,59 +1,76 @@
 <template>
-  <section>
-    <h2>공지사항 수정</h2>
+  <section class="page">
+    <h2>NEWS</h2>
 
-    <p v-if="isLoading">불러오는 중...</p>
+    <div class="form-container">
+      <!-- 로딩 -->
+      <p v-if="isLoading" class="msg">불러오는 중...</p>
 
-    <!-- form -->
-    <form v-else @submit.prevent="handleUpdate">
+      <!-- form -->
+      <form v-else @submit.prevent="handleUpdate">
+        <fieldset class="field-group">
+          <div class="input-wrapper">
+            <!-- 제목 -->
+            <FormField
+              label="제목"
+              placeholder="제목을 입력하세요."
+              name="title"
+              v-model="title"
+            />
+          </div>
 
-      <!-- 제목 -->
-      <FormField
-        label="제목: "
-        placeholder="제목을 입력하세요."
-        name="title"
-        v-model="title"
-      /> <br>
+          <div class="input-wrapper">
+            <!-- 내용 -->
+            <FormField
+              label="내용"
+              placeholder="내용을 입력하세요."
+              name="content"
+              v-model="content"
+              as="textarea" 
+            /> 
+            </div>
 
-      <!-- 내용 -->
-      <FormField
-        label="내용: "
-        placeholder="내용을 입력하세요."
-        name="content"
-        v-model="content"
-      /> <br>
+          <div class="input-wrapper">
+            <!-- 이미지 -->
+            <label class="form-label">이미지</label>
+            <input
+              type="file"
+              name="file"
+              @change="handleFileChange"
+              accept="image/*"
+              class="form-input-file"
+            />
+            
+            <div class="preview-container">
+                <p class="preview-label">현재 이미지</p>
+                <div v-if="previewUrl" class="preview-box">
+                    <img :src="previewUrl" alt="이미지 미리보기" />
+                </div>
+                <div v-else class="no-image">
+                    이미지가 없습니다.
+                </div>
+            </div>
+          </div>
+        </fieldset>
 
-      <!-- 이미지 -->
-      <FormField
-        type="file"
-        label="이미지: "
-        name="file"
-        @change="handleFileChange"
-      /> <br>
+        <!-- 버튼 -->
+        <div class="btn-group">
+          <!-- 수정 버튼 -->
+          <SubmitButton :loading="isSubmitting">
+            수정하기
+          </SubmitButton>
 
-      <!-- 이미지 미리보기 -->
-      <p>현재 이미지</p>
-      <img
-        v-if="previewUrl"
-        :src="previewUrl"
-        alt="이미지 없음"
-        style="max-width: 400px; display: block;"
-      />
-      <p v-else>이미지가 없습니다.</p>
-
-      <!-- 수정하기 버튼 -->
-      <SubmitButton :loading="isSubmitting">
-        수정하기
-      </SubmitButton>
-
-      <!-- 공지사항 목록 이동 -->
-      <button
-        type="button"
-        @click="goList"
-      >
-        목록
-      </button>
-    </form>
+          <!-- 목록 이동 버튼 -->
+          <button
+            type="button"
+            class="btn-secondary"
+            @click="goList"
+          >
+            목록
+          </button>
+        </div>
+      </form>
+    </div>
   </section>
 </template>
 
@@ -115,6 +132,7 @@ const fetchData = async () => {
     // 가져온 파일 URL을 미리보기 변수에 저장
     previewUrl.value = fileUrl.value
   } catch (e) {
+    // 서버 오류 메시지 출력
     console.error(e)
     errorServerMsg.value = e.message ?? '서버 오류가 발생했습니다.'
     alert(errorServerMsg.value)
@@ -170,10 +188,10 @@ const handleUpdate = async () => {
     // 파일을 업로드 했을 경우 updateFile 호출
     if (newFile.value) {
       const formData = new FormData()
-      formData.append('file', newFile.value)
+      formData.append('image', newFile.value)
 
       // 파일 업로드
-      const resFile = await NewsApi.updateFile(newsId, formData);
+      const resFile = await NewsApi.updateImage(newsId, formData);
       const bodyFile = resFile.data
 
       // response.data.success가 false인 경우
@@ -188,8 +206,7 @@ const handleUpdate = async () => {
     router.push('/news')
   } catch (e) {
     // 서버 오류 출력
-    errorServerMsg.value = e.message ?? '서버에 오류가 발생했습니다.'
-    console.log(e);
+    errorServerMsg.value = e.response?.data?.error?.message || e.message;
     alert(errorServerMsg.value)
   } finally {
     // isSubmitting 비활성화
@@ -202,3 +219,171 @@ const goList = () => {
   router.push('/news')
 }
 </script>
+
+<style scoped>
+.page {
+  max-width: 1200px;
+  margin: 40px auto;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    "Noto Sans KR", sans-serif;
+  font-size: 14px;
+  color: #333;
+}
+
+.page > h2 {
+  font-size: 23px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.page h3 {
+  font-size: 16px;
+  font-weight: 600;
+  margin: 20px 0 10px;
+}
+
+.msg {
+    text-align: center;
+    color: #666;
+    margin: 20px 0;
+}
+
+.form-container {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 40px;
+    border: 1px solid #e5e5e5;
+    border-radius: 4px;
+    background-color: #fafafa;
+}
+
+.field-group {
+    border: none;
+    padding: 0;
+    margin: 0;
+}
+
+.input-wrapper {
+    margin-bottom: 25px;
+}
+
+.form-label,
+:deep(label) {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: #333;
+}
+
+.form-input,
+.form-input-file,
+:deep(input[type="text"]),
+:deep(textarea) {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-sizing: border-box;
+    font-size: 14px;
+    background-color: #fff;
+    transition: border-color 0.3s;
+}
+
+:deep(textarea) {
+     min-height: 200px;
+     font-family: inherit;
+     resize: vertical;
+}
+
+.form-input:focus,
+:deep(input:focus),
+:deep(textarea:focus) {
+    outline: none;
+    border-color: #a8a6a4;
+}
+
+.form-input-file {
+    padding: 10px;
+}
+
+.preview-container {
+    margin-top: 15px;
+    padding: 15px;
+    background-color: #fff;
+    border: 1px solid #eee;
+    border-radius: 4px;
+}
+
+.preview-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: #666;
+    margin: 0 0 10px 0;
+}
+
+.preview-box {
+    text-align: center;
+}
+
+.preview-box img {
+    max-width: 100%;
+    max-height: 400px;
+    border-radius: 4px;
+    border: 1px solid #ddd;
+    object-fit: contain;
+}
+
+.no-image {
+    text-align: center;
+    color: #999;
+    padding: 20px 0;
+}
+
+.btn-group {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 30px;
+}
+
+button,
+:deep(button) {
+    display: inline-block;
+    min-width: 100px;
+    padding: 10px 20px;
+    background: #a8a6a4;
+    color: #fff;
+    border: 1px solid #a8a6a4;
+    border-radius: 2px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+button:hover,
+:deep(button:hover) {
+    background: #cfbdaa;
+    border-color: #cfbdaa;
+}
+
+.btn-secondary {
+    background: #fff !important;
+    color: #555 !important;
+    border: 1px solid #ccc !important;
+}
+
+.btn-secondary:hover {
+    background: #f0f0f0 !important;
+    border-color: #bbb !important;
+    color: #333 !important;
+}
+
+:deep(button:disabled) {
+    background-color: #ccc;
+    border-color: #ccc;
+    cursor: not-allowed;
+}
+</style>

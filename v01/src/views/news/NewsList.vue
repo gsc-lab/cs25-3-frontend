@@ -1,6 +1,6 @@
 <template>
-  <section class="list-section">
-    <h2>공지사항 목록</h2>
+  <section class="page">
+    <h2>NEWS</h2>
 
     <!-- if 로딩 중 -->
     <p v-if="isLoading">불러오는 중...</p>
@@ -18,43 +18,52 @@
         <table>
           <thead> 
             <tr>
-              <th>선택</th>
+              <th>번호</th>
               <th>제목</th>
               <th>작성일</th>
-              <th colspan="2">편집</th>
+              <th
+                v-if="userStore.user.role === 'manager'"
+                colspan="2"
+              >
+                편집
+              </th>
             </tr>
           </thead>
           <!-- 정보 영역 -->
           <tbody>
             <tr
-              v-for="item in items"
+              v-for="(item, index) in items"
               :key="item.news_id"
               style="text-align: center;"
               class="card"
             >
-              <td><input type="checkbox" :key="item.news_id"></td>
+              <td>
+                {{ index + 1 }}
+              </td>
               <td @click="goDetail(item.news_id)">{{ item.title }}</td>
               <td>{{ item.created_at }}</td>
 
               <!-- 액션 영역 -->
-              <!-- 수정 페이지 이동 -->
-              <td>
-              <button
-              @click="goUpdate(item.news_id)"
+              <td
+                v-if="userStore.user.role === 'manager'"
               >
-                수정
-              </button>
-              </td>
-              <!-- 삭제 버튼 -->
-              <td>
+                <!-- 수정 페이지 이동 -->
+                <button
+                @click="goUpdate(item.news_id)"
+                >
+                  수정
+                </button>
+
+                <!-- 삭제 버튼 -->
                 <button
                   type="button"
                   class="del-button"
                   @click="handleDelete(item.news_id)"
-                  >
+                >
                   {{ deletingId === item.news_id ? "삭제 중..." : "삭제" }}
                 </button>
               </td>
+              
             </tr>
           </tbody>
         </table>
@@ -62,7 +71,11 @@
     </div>
 
     <!-- 신규 등록 버튼 -->
-    <button @click="goCreate">
+    <button
+      v-if="userStore.user.role === 'manager'"
+      type="button"
+      @click="goCreate"
+    >
       등록
     </button>
   </section>
@@ -73,9 +86,13 @@
 import { ref, onMounted } from 'vue';
 import { NewsApi } from "@/api/news";
 import { useRouter } from 'vue-router';
+import { useUserStore } from '@/stores/user';
 
 // 라우터 변수 선언
 const router = useRouter();
+
+// 사용자 정보 변수 저장
+const userStore = useUserStore();
 
 // 상태 관리 변수
 const items = ref([]);           // 목록 데이터
@@ -152,3 +169,114 @@ const goUpdate = (newsId) => {
   router.push(`/news/update/${newsId}`);
 }
 </script>
+
+<style scoped>
+.page {
+  max-width: 1200px;
+  margin: 40px auto;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    "Noto Sans KR", sans-serif;
+  font-size: 14px;
+  color: #333;
+}
+
+.page > h2 {
+  font-size: 23px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.page h3 {
+  font-size: 16px;
+  font-weight: 600;
+  margin: 20px 0 10px;
+}
+
+p[v-if="isLoading"] {
+  margin: 10px 0;
+}
+
+.list {
+    margin-top: 30px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  border-top: 2px solid #555;
+  margin-bottom: 30px;
+}
+
+table th {
+  background-color: #f8f9fa;
+  color: #555;
+  font-weight: 600;
+  text-align: center;
+  padding: 15px 10px;
+  border-bottom: 1px solid #ddd;
+  white-space: nowrap;
+}
+
+table td {
+  padding: 15px 10px;
+  border-bottom: 1px solid #eee;
+  text-align: center;
+  vertical-align: middle;
+  line-height: 1.5;
+}
+
+.no-data {
+    padding: 40px 0;
+    color: #888;
+}
+
+table td:nth-child(2) {
+    cursor: pointer;
+    text-align: left;
+    font-weight: 500;
+    color: #333;
+}
+table td:nth-child(2):hover {
+    color: #757575;
+    text-decoration: underline;
+}
+
+button,
+.button-btn {
+  padding: 6px 12px;
+  background-color: #f0f0f0;
+  border: 1px solid #ccc;
+  color: #555;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 13px;
+  margin: 0 4px;
+  transition: all 0.2s ease;
+}
+
+button:hover {
+  background-color: #e0e0e0;
+  border-color: #999;
+  color: #333;
+}
+
+.page > button {
+  display: inline-block;
+  min-width: 70px;
+  padding: 8px 16px;
+  margin-right: 5px;
+
+  background: #a8a6a4;
+  color: #fff;
+  border: 0;
+  border-radius: 2px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.page > button:hover {
+  background: #cfbdaa;
+}
+</style>

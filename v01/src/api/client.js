@@ -1,5 +1,7 @@
 // HTTP 요청을 쉽게 처리해 주는 axios 클라이언트 라이브러리 불러오기
 import axios from 'axios'
+import { useUserStore } from '@/stores/user';
+import router from '@/router';
 
 // 모든 요청의 기본 경로를 '/v1'로 고정
 const BASE_URL = '/v1';
@@ -8,7 +10,6 @@ const BASE_URL = '/v1';
 const client = axios.create({
   baseURL: BASE_URL,
   withCredentials: true,
-  headers: { 'Content_Type': 'application/json' }
 })
 
 // 에러 원본 그대로 던지기
@@ -16,14 +17,22 @@ client.interceptors.response.use(
   (res) => res,
   (err) => {
     const status = err.response?.status;
-    const body = err.response?.data;
+    const code   = err.response?.data?.error?.code;
+    const message = err.response?.data?.error?.message;
 
-    // status가 401일 경우
+    // 세션 만료 조건
     if (status === 401) {
-      alert(body?.error?.message ?? '로그인이 필요합니다.');
-      router.push('/login');  // 로그인 페이지 이동
-    } else if (status === 403) {   // status가 403일 경우
-      alert(body?.error?.message ?? '접근 권한이 없습니다.');
+      if (code === 'UNAUTHENTICATED') {
+        const userStore = useUserStore();
+
+        // pinia 상태 초기화
+        userStore.$reset();
+      }
+
+      // 401 에러일 경우
+      // 로그인 페이지 이동
+      alert(message);
+      router.push('/users/login');
     }
 
     return Promise.reject(err);

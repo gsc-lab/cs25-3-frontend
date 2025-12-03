@@ -48,10 +48,10 @@ export const DesignerApi = {
         return res;
     },
     // 이미지 
-    async updateFile(designer_id, formData) {
+    async updateImage(designer_id, formData) {
         const res = await request(
             "POST",
-            `/designer/file/${encodeURIComponent(designer_id)}`,
+            `/designer/image/${encodeURIComponent(designer_id)}`,
             formData
         );
         // header, status, data

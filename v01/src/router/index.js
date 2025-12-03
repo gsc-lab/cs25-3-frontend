@@ -2,83 +2,92 @@
 import { createRouter, createWebHistory } from 'vue-router'
 
 // 라우터 URL과 연결할 view 컴포넌트 가져오기
+// main
+import Main from "@/views/main/Main.vue";
+
 // users
 import UsersRegister from "@/views/users/UsersRegister.vue";
 import UsersLogin from "@/views/users/UsersLogin.vue";
+import UsersUpdate from "@/views/users/UsersUpdate.vue";
 
-// // salon
-// import SalonList from "@/views/salon/SalonList.vue";
-// import SalonUpdate from "@/views/salon/SalonUpdate.vue";
+// salon
+import SalonDetail from "@/views/salon/SalonDetail.vue";
+import SalonUpdate from "@/views/salon/SalonUpdate.vue";
 
-// // service
-// import ServiceCreate from "@/views/service/ServiceCreate.vue";
-// import ServiceList from "@/views/service/ServiceList.vue";
-// import ServiceUpdate from "@/views/service/ServiceUpdate.vue";
+// service
+import ServiceCreate from "@/views/service/ServiceCreate.vue";
+import ServiceList from "@/views/service/ServiceList.vue";
+import ServiceUpdate from "@/views/service/ServiceUpdate.vue";
 
 // hairstyle
 import HairstyleCreate from "@/views/hairstyle/HairstyleCreate.vue";
 import HairstyleList from "@/views/hairstyle/HairstyleList.vue";
 import HairstyleUpdate from "@/views/hairstyle/HairstyleUpdate.vue";
+import HairstyleDetail from "@/views/hairstyle/HairstyleDetail.vue";
 
-// // designer
-// import DesignerCreate from "@/views/designer/DesignerCreate.vue";
-// import DesignerDetail from "@/views/designer/DesignerDetail.vue";
-// import DesignerList from "@/views/designer/DesignerList.vue";
-// import DesignerUpdate from "@/views/designer/DesignerUpdate.vue";
+// designer
+import DesignerCreate from "@/views/designer/DesignerCreate.vue";
+import DesignerList from "@/views/designer/DesignerList.vue";
+import DesignerUpdate from "@/views/designer/DesignerUpdate.vue";
 
-// // reservation
+// reservation
+import ReservationCreate from "@/views/reservation/ReservationCreate.vue";
+import ReservationPrevious from "@/views/reservation/ReservationPrevious.vue";
 
+// news
+import NewsCreate from "@/views/news/NewsCreate.vue";
+import NewsDetail from "@/views/news/NewsDetail.vue";
+import NewsList from "@/views/news/NewsList.vue";
+import NewsUpdate from "@/views/news/NewsUpdate.vue";
 
-// // news
-// import NewsCreate from "@/views/news/NewsCreate.vue";
-// import NewsDelete from "@/views/news/NewsDelete.vue";
-// import NewsDetail from "@/views/news/NewsDetail.vue";
-// import NewsList from "@/views/news/NewsList.vue";
-// import NewsUpdate from "@/views/news/NewsUpdate.vue";
-
-// // mypage
-// import Mypage from "@/views/mypage/Mypage.vue";
-
+// mypage
+import Mypage from "@/views/mypage/Mypage.vue";
+import MypageDesigner from "@/views/mypage/MypageDesigner.vue";
 
 // 라우터 설정
 export default createRouter({
     history: createWebHistory(),
     routes: [
+        // main
+        { path: '/', component: Main},
+
         // users
         { path: '/users/create', component: UsersRegister },
         { path: '/users/login', component: UsersLogin },
+        { path: '/users/update', component: UsersUpdate },
 
-        // // salon
-        // { path: '/salon', component: SalonList },
-        // { path: '/salon/update', component: SalonUpdate },
+        // salon
+        { path: '/salon', component: SalonDetail },
+        { path: '/salon/update', component: SalonUpdate },
 
-        // // service
-        // { path: '/service/create', component: ServiceCreate },
-        // { path: '/service', component: ServiceList },
-        // { path: '/service/update/:service_id', component: ServiceUpdate },
+        // service
+        { path: '/service/create', component: ServiceCreate },
+        { path: '/service', component: ServiceList },
+        { path: '/service/update/:service_id', component: ServiceUpdate },
         
         // hairstyle
         { path: '/hairstyle', component: HairstyleList },
         { path: '/hairstyle/create', component: HairstyleCreate },
         { path: '/hairstyle/update/:hair_id', component: HairstyleUpdate, props: true },
+        { path: '/hairstyle/:hair_id', component: HairstyleDetail, props: true },
 
-        // // designer
-        // { path: '/designer/create', component: DesignerCreate },
-        // { path: '/designer/:designer_id', component: DesignerDetail, props: true },
-        // { path: '/designer', component: DesignerList },
-        // { path: '/designer/update/:designer_id', component: DesignerUpdate, props: true },
+        // designer
+        { path: '/designer/create', component: DesignerCreate },
+        { path: '/designer', component: DesignerList },
+        { path: '/designer/update/:designer_id', component: DesignerUpdate, props: true },
 
-        // // reservation
+        // reservation
+        { path: "/reservation", component: ReservationCreate },
 
+        // news
+        { path: '/news/create', component: NewsCreate },
+        { path: '/news/:news_id', component: NewsDetail, props: true },
+        { path: '/news', component: NewsList },
+        { path: '/news/update/:news_id', component: NewsUpdate, props: true },
 
-        // // news
-        // { path: '/news', component: NewsCreate },
-        // { path: '/news/delete/:news_id', component: NewsDelete, props: true },
-        // { path: '/news/:news_id', component: NewsDetail, props: true },
-        // { path: '/news', component: NewsList },
-        // { path: '/news/update/:news_id', component: NewsUpdate, props: true },
-
-        // // mypage
-        // { path: '/mypage', component: Mypage.vue },
+        // mypage
+        { path: '/mypage', component: Mypage },
+        { path: '/mypage/previous', component: ReservationPrevious },
+        { path: '/mypage/designer', component: MypageDesigner }
     ]
 });
