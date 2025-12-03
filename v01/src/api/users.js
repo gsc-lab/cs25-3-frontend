@@ -17,7 +17,7 @@ export const UsersApi = {
 
   // 특정 사용자 정보 조회
   async detail() {
-    const res = await request("GET", "/users/detail");
+    const res = await request("GET", "/users");
     return res;
   },
 
@@ -25,7 +25,7 @@ export const UsersApi = {
   async update(payload) {
     const res = await request(
       "PUT",
-      "/users/update}",
+      "/users/update",
       payload
     );
     return res;
