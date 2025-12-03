@@ -8,6 +8,7 @@ import Main from "@/views/main/Main.vue";
 // users
 import UsersRegister from "@/views/users/UsersRegister.vue";
 import UsersLogin from "@/views/users/UsersLogin.vue";
+import UsersUpdate from "@/views/users/UsersUpdate.vue";
 
 // salon
 import SalonDetail from "@/views/salon/SalonDetail.vue";
@@ -22,6 +23,7 @@ import ServiceUpdate from "@/views/service/ServiceUpdate.vue";
 import HairstyleCreate from "@/views/hairstyle/HairstyleCreate.vue";
 import HairstyleList from "@/views/hairstyle/HairstyleList.vue";
 import HairstyleUpdate from "@/views/hairstyle/HairstyleUpdate.vue";
+import HairstyleDetail from "@/views/hairstyle/HairstyleDetail.vue";
 
 // designer
 import DesignerCreate from "@/views/designer/DesignerCreate.vue";
@@ -30,6 +32,7 @@ import DesignerUpdate from "@/views/designer/DesignerUpdate.vue";
 
 // reservation
 import ReservationCreate from "@/views/reservation/ReservationCreate.vue";
+import ReservationPrevious from "@/views/reservation/ReservationPrevious.vue";
 
 // news
 import NewsCreate from "@/views/news/NewsCreate.vue";
@@ -39,6 +42,7 @@ import NewsUpdate from "@/views/news/NewsUpdate.vue";
 
 // mypage
 import Mypage from "@/views/mypage/Mypage.vue";
+import MypageDesigner from "@/views/mypage/MypageDesigner.vue";
 
 // 라우터 설정
 export default createRouter({
@@ -48,8 +52,9 @@ export default createRouter({
         { path: '/', component: Main},
 
         // users
-        { path: '/users/create', component: UsersRegister},
-        { path: '/users/login', component: UsersLogin},
+        { path: '/users/create', component: UsersRegister },
+        { path: '/users/login', component: UsersLogin },
+        { path: '/users/update', component: UsersUpdate },
 
         // salon
         { path: '/salon', component: SalonDetail },
@@ -64,6 +69,7 @@ export default createRouter({
         { path: '/hairstyle', component: HairstyleList },
         { path: '/hairstyle/create', component: HairstyleCreate },
         { path: '/hairstyle/update/:hair_id', component: HairstyleUpdate, props: true },
+        { path: '/hairstyle/:hair_id', component: HairstyleDetail, props: true },
 
         // designer
         { path: '/designer/create', component: DesignerCreate },
@@ -81,5 +87,7 @@ export default createRouter({
 
         // mypage
         { path: '/mypage', component: Mypage },
+        { path: '/mypage/previous', component: ReservationPrevious },
+        { path: '/mypage/designer', component: MypageDesigner }
     ]
 });
