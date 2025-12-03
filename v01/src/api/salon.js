@@ -9,8 +9,14 @@ export const SalonApi = {
   },
 
   // 수정하기
-  async update(formData) {
-    const res = await request("PUT", "/salon/update", formData);
+  async update(payload) {
+    const res = await request("PUT", "/salon/update", payload);
+    return res.data;
+  },
+
+  // 이미지 올리기
+  async updateImage(formData) {
+    const res = await request("POST", "/salon/image", formData);
     return res.data;
   }
 };
