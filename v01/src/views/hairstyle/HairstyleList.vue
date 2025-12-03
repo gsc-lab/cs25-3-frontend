@@ -1,77 +1,77 @@
 <template>
-  <section class="list-section">
-    <h2>헤어스타일 목록</h2>
+  <section class="page">
+    <h2>HAIRSTYLE</h2>
 
-    <!-- 로딩 중 -->
-    <p v-if="isLoading">불러오는 중...</p>
+    <!-- 로딩 -->
+    <p v-if="isLoading" class="msg">불러오는 중...</p>
 
-    <!-- 에러 발생 -->
-    <p v-else-if="errorMessage" class="error">{{ errorMessage }}</p>
+    <!-- 서버 오류 메시지 -->
+    <p v-else-if="errorMessage" class="msg error">{{ errorMessage }}</p>
 
-    <!-- 데이터는 불러왔지만 목록이 비어 있을 때 -->
-    <p v-else-if="items.length === 0">등록된 헤어스타일이 없습니다.</p>
+    <!-- 헤어스타일 정보가 없을 경우 -->
+    <p v-else-if="items.length === 0" class="msg">등록된 헤어스타일이 없습니다.</p>
 
-    <!-- 목록 렌더링 -->
-    <div class="list" v-else>
+    <div v-else class="gallery-grid">
       <article
         v-for="item in items"
         :key="item.hair_id"
-        class="card"
+        class="hair-card"
       >
-        <!-- 이미지 영역 -->
-        <div class="thumb">
+        <!-- 이미지 박스 -->
+        <div class="image-box">
           <img
             v-if="item.image"
             :src="item.image"
             :alt="item.title"
-            style="width: 300px; object-fit: cover;"
           />
-          <div v-else class="no-image">이미지 없음</div>
-        </div>
-
-        <!-- 정보 영역 -->
-        <div class="info">
-          <h3>{{ item.title }}</h3>
-          <p class="desc">{{ item.description }}</p>
-          <p class="meta">ID: {{ item.hair_id }}</p>
-
-          <!-- 액션 버튼들 -->
-          <div 
-            v-if="userStore.user.role === 'manager'"
-            class="actions"
-          >
-            <!-- 수정 페이지 이동 -->
-            <button
-              type="button"
-              @click="goUpdate(item.hair_id)"
+          <div v-else class="no-image">No Image</div>
+          
+          <div class="overlay">
+            <!-- 이미지 제목 -->
+            <h3
+              class="hair-title"
+              @click="router.push(`/hairstyle/${item.hair_id}`)"
             >
-              수정
-            </button>
-
-            <!-- 삭제 버튼 -->
-            <button
-              type="button"
-              class="danger"
-              :disabled="deletingId === item.hair_id"
-              @click="handleDelete(item.hair_id)"
+              {{ item.title }}
+            </h3>
+            
+            <div 
+              v-if="userStore.user.role === 'manager'"
+              class="actions"
             >
-              {{ deletingId === item.hair_id ? "삭제 중..." : "삭제" }}
-            </button>
+              <!-- 수정 버튼 -->
+              <button
+                type="button"
+                @click.stop="goUpdate(item.hair_id)"
+              >
+                수정
+              </button>
+
+              <!-- 삭제 버튼 -->
+              <button
+                type="button"
+                class="btn-danger"
+                :disabled="deletingId === item.hair_id"
+                @click.stop="handleDelete(item.hair_id)"
+              >
+                삭제
+              </button>
+            </div>
           </div>
         </div>
       </article>
     </div>
 
-    <hr>
-
-    <!-- 신규 등록 버튼 -->
-    <button
-      v-if="userStore.user.role === 'manager'"
-      type="button"
-      @click="goCreate"
-    >
-      등록
-    </button>
+    <!-- 헤어스타일 등록 페이지 이동 버튼 -->
+    <div class="action-row" v-if="userStore.user.role === 'manager'">
+      <button
+        type="button"
+        class="btn-primary"
+        @click="goCreate"
+      >
+        헤어스타일 등록
+      </button>
+    </div>
   </section>
 </template>
 
@@ -81,77 +81,250 @@ import { useRouter } from "vue-router";
 import { HairstyleApi } from "@/api/hairstyle";
 import { useUserStore } from "@/stores/user";
 
-// userStore 객체 생성
+// 로그인 정보 불러오기
 const userStore = useUserStore();
 
 // 라우터 생성
 const router = useRouter();
 
+// 목록 데이터 변수
+const items = ref([]);
+
 // 상태 관리 변수
-const items = ref([]);           // 목록 데이터
-const isLoading = ref(false);     // 로딩 상태
-const errorMessage = ref("");     // 에러 메시지
-const deletingId = ref(null);     // 현재 삭제 중인 hair_id
+const isLoading = ref(false);    // 로딩 상태
+const errorMessage = ref("");    // 에러 메시지
+const deletingId = ref(null);    // 현재 삭제 중인 ID
 
 // 목록 조회
 const fetchList = async () => {
-  isLoading.value = true;  // 로딩 시작
+  // isLoading 활성화
+  isLoading.value = true;
+
+  // 서버 오류 메시지 초기화
   errorMessage.value = "";
 
   try {
-    // hairstyle API 호출
+    // HairstyleApi.list()
     const res = await HairstyleApi.list();
-
-    // 응답 데이터를 items 변수에 저장
     items.value = res.data?.hairstyle ?? [];
   } catch (e) {
-    // 서버 에러
-    errorMessage.value = e.response?.data?.error?.message
+    // 서버 오류 메시지 출력
+    errorMessage.value = e.response?.data?.error?.message || "목록을 불러오지 못했습니다.";
+    alert(errorMessage.value);
   } finally {
-    // 로딩 종료
+    // isLoading 비활성화
     isLoading.value = false;
   }
 };
 
-// 컴포넌트 첫 렌더링 시 목록 불러오기
 onMounted(fetchList);
 
 // 삭제 처리
 const handleDelete = async (hairId) => {
-  const ok = confirm("이 헤어스타일을 삭제하시겠습니까?");
+  // 삭제 여부
+  const ok = confirm("정말 삭제하시겠습니까?");
   if (!ok) return;
 
   try {
-    // 현재 삭제하고 있는 id값 부여
     deletingId.value = hairId;
 
-    // DELETE
+    // HairstyleApi.delete(hairId)
     const res = await HairstyleApi.delete(hairId);
-    const status = res ?? 0;
+    const status = res?.status ?? res;
 
-    // 백엔드에서 204 No Content 응답 기대
-    if (status !== 204) {
-      throw new Error("삭제 요청이 정상 처리되지 않았습니다.");
+    // response.status가 200 혹은 204일 경우
+    // 에러 메시지 던지기
+    if (status !== 204 && status !== 200) {
+      throw new Error("삭제 실패");
     }
 
-    // 프론트 목록에서 바로 제거
+    // 프론트 목록에서 제거
     items.value = items.value.filter(item => item.hair_id !== hairId);
   } catch (e) {
-    const msg = e.response?.data?.error?.message
+    // 서버 오류 메시지 출력
+    const msg = e.response?.data?.error?.message || "삭제 중 오류가 발생했습니다.";
     alert(msg);
   } finally {
-    // deletingId null 처리
+    // deletingId 초기화
     deletingId.value = null;
   }
 };
 
-// 헤어스타일 등록 페이지 이동 함수
+// 헤어스타일 등록 페이지 이동 함수 정의
 const goCreate = () => {
   router.push('/hairstyle/create');
 }
 
-// 헤어스타일 수정 페이지 이동 함수
-const goUpdate = (hairstyle_id) => {
-  router.push(`/hairstyle/update/${hairstyle_id}`)
+// 헤어스타일 수정 페이지 이동 함수 정의
+const goUpdate = (hairId) => {
+  router.push(`/hairstyle/update/${hairId}`);
 }
 </script>
+
+<style scoped>
+.page {
+  max-width: 1200px;
+  margin: 40px auto;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    "Noto Sans KR", sans-serif;
+  font-size: 14px;
+  color: #333;
+}
+
+.page > h2 {
+  font-size: 23px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.msg {
+    text-align: center;
+    padding: 40px;
+    font-size: 16px;
+    color: #666;
+}
+.msg.error {
+    color: #d9534f;
+}
+
+.gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 20px;
+    margin-bottom: 40px;
+}
+
+.hair-card {
+    position: relative;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+    background-color: #eee;
+    aspect-ratio: 3 / 4; 
+}
+
+.image-box {
+    width: 100%;
+    height: 100%;
+    position: relative;
+}
+
+.image-box img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.3s ease;
+}
+
+.no-image {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #e0e0e0;
+    color: #888;
+    font-size: 14px;
+}
+
+.overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    opacity: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    transition: opacity 0.3s ease;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+.hair-card:hover .overlay {
+    opacity: 1;
+}
+
+.hair-card:hover img {
+    transform: scale(1.05);
+}
+
+.hair-title {
+    color: #fff;
+    font-size: 18px;
+    font-weight: 600;
+    margin: 0 0 20px 0;
+    text-align: center;
+}
+
+.actions {
+    display: flex;
+    gap: 10px;
+}
+
+button {
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+  border: none;
+  background-color: #fff;
+  color: #333;
+  transition: all 0.2s ease;
+}
+
+button:hover {
+  background-color: #f0f0f0;
+}
+
+.btn-danger {
+    color: #d9534f;
+}
+.btn-danger:hover {
+    background-color: #fff0f0;
+}
+
+.action-row {
+    text-align: center;
+    margin-top: 40px;
+}
+
+.btn-primary {
+  padding: 12px 30px;
+  font-size: 15px;
+  background: #a8a6a4;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  transition: background-color 0.3s ease;
+}
+
+.btn-primary:hover {
+  background: #cfbdaa;
+}
+
+.hair-title {
+  color: #fff;
+  font-size: 18px;
+  font-weight: 600;
+  margin: 0 0 20px 0;
+  text-align: center;
+  cursor: pointer;
+  text-decoration: none;
+  transition: color 0.2s ease, text-decoration-color 0.2s ease;
+}
+
+.hair-title:hover {
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 3px;
+}
+
+</style>
