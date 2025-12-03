@@ -1,105 +1,158 @@
 <template>
   <div class="page">
-    <h2>MYPAGE</h2>
+    <h2 style="text-align: center;">MYPAGE</h2>
 
-    <!-- 로딩 중 -->
-    <div v-if="isLoading">불러오는 중...</div>
+    <!-- 예약 정보 -->
+    <div
+      v-if="role === 'client' || role === 'designer'"
+      class="reservation"
+    >
+      <h3>현재 예약 목록</h3>
+      <!-- 로딩 중 -->
+      <div v-if="isLoading">불러오는 중...</div>
 
-    <!-- 서버 오류 메시지가 있을 경우 -->
-    <!-- 에러 메시지 출력 -->
-    <div v-else-if="errorServerMsg" class="error">{{ errorServerMsg }}</div>
-    <div v-else-if="reservations.length === 0">
-      예약이 없습니다.
+      <!-- 서버 오류 메시지가 있을 경우 -->
+      <!-- 에러 메시지 출력 -->
+      <div v-else-if="errorServerMsg" class="error">{{ errorServerMsg }}</div>
+      <div v-else-if="reservations.length === 0">
+        예약이 없습니다.
+      </div>
+
+      <!-- 예약이 있을 경우 -->
+      <table v-else class="rv-table">
+        <thead>
+          <tr>
+            <th>번호</th>
+            <th>디자이너</th>
+            <th>고객</th>
+            <th>서비스</th>
+            <th>요구사항</th>
+            <th>날짜</th>
+            <th>시간</th>
+            <th>상태</th>
+            <th>합계</th>
+            <th>취소사유</th>
+            <th>변경</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr
+            v-for="(rv, index) in reservations"
+            :key="rv.reservation_id"
+          >
+            <!-- 번호 -->
+            <td>{{ index + 1 }}</td>
+            <!-- 디자이너 -->
+            <td>{{ rv.designer_name }}</td>
+            <!-- 고객 -->
+            <td>{{ rv.client_name }}</td>
+            <!-- 서비스 목록 -->
+            <td>
+              <ul class="service-list">
+                <li
+                  v-for="(name, index) in rv.services"
+                  :key="index"
+                >
+                  {{ name }}
+                </li>
+              </ul>
+            </td>
+            <!-- 요구사항 -->
+            <td>{{ rv.requirement }}</td>
+            <!-- 날짜 -->
+            <td>{{ rv.day }}</td>
+            <!-- 시간 -->
+            <td>{{ rv.start_at }} ~ {{ rv.end_at }}</td>
+            <!-- 상태 -->
+            <td>{{ rv.status }}</td>
+            <!-- 합계 -->
+            <td>{{ rv.total_price.toLocaleString() }}원</td>
+            <!-- 취소사유 -->
+            <td>
+              <div v-if="rv.cancel_reason">
+                <p class="cancel-info">
+                  취소 사유: {{ rv.cancel_reason }}
+                  <br />
+                  취소 시각: {{ rv.cancelled_at }}
+                </p>
+              </div>
+            </td>
+            <!-- 변경 -->
+            <td>
+              <!-- client: 예약 취소 버튼 -->
+              <button
+                v-if="role === 'client' && canCancel(rv)"
+                @click="handleCancel(rv)"
+              >
+                취소
+              </button>
+
+              <!-- designer: 상태 변경 select -->
+              <div
+                v-if="role === 'designer' && rv.status !== ('cancelled' || 'completed')"
+              >
+                <select v-model="rv._statusDraft">
+                  <option value="pending">대기</option>
+                  <option value="confirmed">확정</option>
+                  <option value="completed">완료</option>
+                  <option value="no_show">노쇼</option>
+                  <option value="cancelled">취소</option>
+                </select>
+                <button @click="handleChangeStatus(rv)">변경</button>
+              </div>
+              <div v-else>
+                <p v-if="rv.status === 'completed'">서비스 완료</p>
+                <p v-else-if="rv.status === 'cancelled'">취소 완료</p>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table> <br>
     </div>
 
-    <!-- 예약이 있을 경우 -->
-    <table v-else class="rv-table">
-      <thead>
-        <tr>
-          <th>번호</th>
-          <th>디자이너</th>
-          <th>고객</th>
-          <th>서비스</th>
-          <th>날짜</th>
-          <th>시간</th>
-          <th>상태</th>
-          <th>합계</th>
-          <th>취소사유</th>
-          <th>변경</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr
-          v-for="(rv, index) in reservations"
-          :key="rv.reservation_id"
-        >
-          <!-- 번호 -->
-          <td>{{ index + 1 }}</td>
-          <!-- 디자이너 -->
-          <td>{{ rv.designer_name }}</td>
-          <!-- 고객 -->
-          <td>{{ rv.client_name }}</td>
-          <!-- 서비스 목록 -->
-          <td>
-            <ul class="service-list">
-              <li
-                v-for="(name, index) in rv.services"
-                :key="index"
-              >
-                {{ name }}
-              </li>
-            </ul>
-          </td>
-          <!-- 날짜 -->
-          <td>{{ rv.day }}</td>
-          <!-- 시간 -->
-          <td>{{ rv.start_at }} ~ {{ rv.end_at }}</td>
-          <!-- 상태 -->
-          <td>{{ rv.status }}</td>
-          <!-- 합계 -->
-          <td>{{ rv.total_price.toLocaleString() }}원</td>
-          <!-- 취소사유 -->
-          <td>
-            <div v-if="rv.cancel_reason">
-              <p class="cancel-info">
-                취소 사유: {{ rv.cancel_reason }}
-                <br />
-                취소 시각: {{ rv.cancelled_at }}
-              </p>
-            </div>
-          </td>
-          <!-- 변경 -->
-          <td>
-            <!-- client: 예약 취소 버튼 -->
-            <button
-              v-if="role === 'client' && canCancel(rv)"
-              @click="handleCancel(rv)"
-            >
-              취소
-            </button>
-
-            <!-- designer: 상태 변경 select -->
-            <div v-if="role === 'designer'">
-              <select v-model="rv._statusDraft">
-                <option value="pending">대기</option>
-                <option value="confirmed">확정</option>
-                <option value="completed">완료</option>
-                <option value="no_show">노쇼</option>
-                <option value="cancelled">취소</option>
-              </select>
-              <button @click="handleChangeStatus(rv)">변경</button>
-            </div>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+    <!-- 프로필 관리 -->
+    <h3>사용자 정보 관리</h3>
+    <fieldset>
+      <button
+        v-if="role === 'manager'"
+        type="button"
+        @click="router.push('/mypage/designer')"
+      >
+        직원 휴무 관리
+      </button>
+      <button
+        v-if="role === 'client' || role === 'designer'"
+        type="button"
+        @click="router.push('/mypage/previous')"
+      >
+        예약 이력
+      </button>
+      <button
+        type="button"
+        @click="goUsersChange"
+      >
+        회원 정보 변경
+      </button>
+      <button
+        v-if="role === 'client' || role === 'designer'"
+        type="button"
+        @click=UsersDelete
+      >
+        회원탈퇴
+    </button>
+    </fieldset>
   </div>
 </template>
 
 <script setup>
 import { onMounted, ref } from "vue";
 import { useUserStore } from "@/stores/user";
+import { useRouter } from "vue-router";
 import { ReservationApi } from "@/api/reservation";
+import { UsersApi } from "@/api/users";
+
+// 라우터 생성
+const router = useRouter();
 
 // 사용자 정보 가져오기
 const userStore = useUserStore();
@@ -194,13 +247,81 @@ async function handleChangeStatus(rv) {
     alert("상태 변경에 실패했습니다.");
   }
 }
+
+// 회원 정보 변경 페이지 이동
+const goUsersChange = () => {
+  router.push('/users/update');
+}
+
+// 회원탈퇴
+const UsersDelete = async () => {
+  // 삭제 확인 메시지
+  const ok = confirm("정말 삭제하시겠습니까?");
+  if (!ok) return;
+
+  // 한번 더 묻기
+  const ask = prompt("삭제를 원하신다면 '삭제확인'를 입력하세요.")
+  if (ask !== '삭제확인') {
+    alert("삭제에 실패했습니다. 다시 시도해 주세요!");
+    return;  // 삭제 로직 종료
+  }
+
+  try {
+    // UsersApi.delete()
+    const res = await UsersApi.delete();
+    const status = res.status;
+
+    // response.status가 204가 아닌 경우
+    // 에러 메시지 출력
+    if (status !== 204) {
+      alert("삭제에 실패했습니다.");
+    }
+
+    // 삭제 성공 시
+    // 성공 메시지 출력
+    alert("삭제에 성공했습니다! 로그아웃합니다.");
+
+    // 로그아웃 실행
+    await UsersApi.logout();
+    userStore.logout();
+
+    // 메인 페이지 이동
+    router.push("/");
+  } catch(e) {
+    // 서버 메시지 출력
+    errorServerMsg.value = e.message || "서버 내부 오류가 발생했습니다.";
+    alert(errorServerMsg.value);
+  }
+}
 </script>
 
 
 <style scoped>
 .page {
-  max-width: 960px;
-  margin: 0 auto;
+  max-width: 1200px;
+  margin: 40px auto;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    "Noto Sans KR", sans-serif;
+  font-size: 14px;
+  color: #333;
+}
+
+.page > h2 {
+  font-size: 23px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.page h3 {
+  font-size: 16px;
+  font-weight: 600;
+  margin: 20px 0 10px;
+}
+
+p[v-if="isLoading"] {
+  margin: 10px 0;
 }
 .toolbar {
   display: flex;
@@ -214,7 +335,7 @@ async function handleChangeStatus(rv) {
 .rv-table th,
 .rv-table td {
   border: 1px solid #ddd;
-  padding: 6px 8px;
+  padding: 8px 10px;
   font-size: 14px;
 }
 .service-list {
@@ -227,5 +348,32 @@ async function handleChangeStatus(rv) {
 }
 .error {
   color: red;
+}
+
+table thead {
+  background-color: #f5f5f5;
+}
+
+fieldset {
+  border: none;
+  padding: 0;
+  margin-top: 20px;
+}
+
+fieldset button {
+  display: inline-block;
+  padding: 8px 14px;
+  margin-right: 10px;
+
+  background: #a8a6a4;
+  color: white;
+  border: 0;
+  border-radius: 2px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+fieldset button:hover {
+  background: #cfbdaa;
 }
 </style>
