@@ -45,5 +45,33 @@ export const ReservationApi = {
       { status }
     );
     return res.data;
-  }
+  },
+
+  // 예약 이력 조회
+  async previousList(time = -1) {
+    try {
+      const res = await request(
+        "GET",
+        `/reservation?time=${time}`
+      );
+      return res; // header, data, status
+    } catch (e) {
+      console.log(e);
+      throw e;
+    }
+  },
+
+  // 특정 디자이너 예약 조회
+  async designerDetail(designer_id) {
+    try {
+      const res = await request(
+        "GET",
+        `/reservation/designer?designer_id=${encodeURIComponent(designer_id)}`
+      );
+      return res; // header, data, status
+    } catch (e) {
+      console.log(e);
+      throw e;
+    }
+  },
 };
