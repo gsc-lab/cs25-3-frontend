@@ -27,7 +27,7 @@
             :key="to.to_id"
           >
             <td>{{ index + 1 }}</td>
-            <td>{{ to.user_name }}</td>
+            <td>{{ to.designer_name }}</td>
             <td>{{ to.start_at }}</td>
             <td>{{ to.end_at }}</td>
             <td>
