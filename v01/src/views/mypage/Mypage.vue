@@ -89,7 +89,7 @@
 
               <!-- designer: 상태 변경 select -->
               <div
-                v-if="role === 'designer' && rv.status !== 'cancelled' || rv.status !== 'completed'"
+                v-if="role === 'designer' && (rv.status !== 'cancelled' && rv.status !== 'completed')"
               >
                 <select v-model="rv._statusDraft">
                   <option value="pending">대기</option>
