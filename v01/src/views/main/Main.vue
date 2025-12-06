@@ -184,7 +184,6 @@ onMounted(fetchList);
   text-decoration: none;
 }
 
-/* HAIR STYLE 그리드 */
 .hairstyle-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -196,13 +195,13 @@ onMounted(fetchList);
   flex-direction: column;
   text-decoration: none;
   border: 1px solid #ddd;
-  padding: 6px;
+  padding: 8px;
   background-color: #fff;
 }
 
 .thumb-wrapper {
   aspect-ratio: 1 / 1;
-  border: 1px dashed #ccc;
+  border: 1px solid #ccc;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -216,13 +215,12 @@ onMounted(fetchList);
 }
 
 .card-title {
-  margin-top: 6px;
+  margin-top: 5px;
   font-size: 13px;
   text-align: center;
   color: #333;
 }
 
-/* NEWS 리스트 */
 .news-list {
   display: flex;
   flex-direction: column;
@@ -258,7 +256,6 @@ onMounted(fetchList);
   color: #555;
 }
 
-/* 헬퍼 텍스트 */
 .helper-text {
   font-size: 13px;
   color: #666;

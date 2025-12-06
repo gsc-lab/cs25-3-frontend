@@ -23,7 +23,7 @@
             :key="to.to_id"
           >
             <td>{{ index + 1 }}</td>
-            <td>{{ to.user_name }}</td>
+            <td>{{ to.designer_name }}</td>
             <td>{{ to.start_at }}</td>
             <td>{{ to.end_at }}</td>
           </tr>
@@ -65,6 +65,7 @@
           <tbody>
             <tr
               v-for="(rv, index) in reservations"
+              v-if="reservations"
               :key="rv.reservation_id"
             >
               <td>{{ index + 1 }}</td>
@@ -72,6 +73,11 @@
               <td>{{ rv.day }}</td>
               <td>{{ rv.start_at }} ~ {{ rv.end_at }}</td>
               <td>{{ rv.status }}</td>
+            </tr>
+            <tr
+              v-else
+            >
+              <td colspan="5">등록된 예약 정보가 없습니다.</td>
             </tr>
           </tbody>
         </table>
