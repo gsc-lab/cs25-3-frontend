@@ -1,7 +1,9 @@
 <template>
   <header class="header">
     <!-- 로고 -->
-    <router-link to="/" class="logo">kimhadiii Salon</router-link>
+    <router-link to="/" class="logo">
+      <img :src="logoSrc" alt="kimhadhiii logo" class="logo-img" />
+    </router-link>
 
     <!-- 햄버거 아이콘 -->
     <button class="hamburger" @click="menuOpen = !menuOpen">
@@ -44,6 +46,7 @@ import { useUserStore } from '@/stores/user';
 import { useRouter } from 'vue-router';
 import { UsersApi } from '@/api/users';
 import MainHero from '@/components/layout/MainHero.vue';
+import logoSrc from '@/assets/logo-kimhadhiii.png';
 
 const userStore = useUserStore()
 const router = useRouter()
@@ -77,7 +80,6 @@ const onLogout = async () => {
 </script>
 
 <style scoped>
-/* 기존 스타일 유지 */
 .header {
   position: sticky;
   top: 0;
@@ -100,7 +102,6 @@ const onLogout = async () => {
   white-space: nowrap;
 }
 
-/* PC 메뉴 */
 .nav {
   flex: 1;
   display: flex;
@@ -120,14 +121,12 @@ const onLogout = async () => {
   transition: color 0.2s ease, border-color 0.2s ease;
 }
 
-/* 활성 메뉴 */
 .nav-link.router-link-active {
   color: #111;
   font-weight: 600;
   border-color: #111;
 }
 
-/* 로그인 영역 */
 .login-info {
   display: flex;
   align-items: center;
@@ -159,7 +158,6 @@ const onLogout = async () => {
   cursor: pointer;
 }
 
-/* -- 모바일 햄버거 버튼 -- */
 .hamburger {
   display: none;
   flex-direction: column;
@@ -188,13 +186,24 @@ const onLogout = async () => {
   transform: translateY(-7px) rotate(-45deg);
 }
 
-/* -- 모바일 반응형 -- */
+.logo {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  color: inherit;
+}
+
+.logo-img {
+  height: 50px;
+  width: auto;
+  display: block;
+}
+
 @media (max-width: 960px) {
   .hamburger {
     display: flex;
   }
 
-  /* 메뉴 기본적으로 숨김 */
   .nav {
     position: absolute;
     top: 60px;
@@ -213,7 +222,6 @@ const onLogout = async () => {
     pointer-events: none;
   }
 
-  /* 메뉴 열림 */
   .nav.open {
     opacity: 1;
     pointer-events: auto;
@@ -224,7 +232,6 @@ const onLogout = async () => {
     border-bottom: 1px solid #f2f2f2;
   }
 
-  /* 데스크톱용 가운데 정렬 제거 */
   .nav {
     justify-content: flex-start;
   }
@@ -239,4 +246,5 @@ const onLogout = async () => {
     font-size: 0.7rem;
   }
 }
+
 </style>

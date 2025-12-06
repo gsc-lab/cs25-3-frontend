@@ -3,7 +3,7 @@
     <div class="inner">
       <!-- 브랜드 -->
       <div class="hero">
-        <h2 class="brand">kimhadiii Salon</h2>
+        <h2 class="brand">HAIR SALON KIMHADHIII</h2>
         <p class="tagline">Hairdressers & Colourists</p>
       </div>
 
