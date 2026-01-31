@@ -1,8 +1,5 @@
 [![Vue.js](https://img.shields.io/badge/Vue.js-3.5-4FC08D?logo=vue.js&logoColor=white)](https://vuejs.org/)
 [![Vite](https://img.shields.io/badge/Vite-7.1-646CFF?logo=vite&logoColor=white)](https://vitejs.dev/)
-[![Pinia](https://img.shields.io/badge/Pinia-2.2-yellow?logo=vue.js&logoColor=white)](https://pinia.vuejs.org/)
-[![Vue Router](https://img.shields.io/badge/Vue_Router-4.4-42b883)](https://router.vuejs.org/)
-[![Axios](https://img.shields.io/badge/Axios-1.7-5A29E4?logo=axios&logoColor=white)](https://axios-http.com/)
 
 🌐 **한국어** | [日本語](README.md)
 
@@ -14,6 +11,8 @@
 
 Vue 3 기반 미용실 예약 시스템 프론트엔드 프로젝트입니다.
 
+고객은 원하는 미용실, 디자이너, 서비스를 선택하여 예약할 수 있으며, 디자이너와 매니저는 예약 관리 및 살롱 운영에 필요한 기능을 이용할 수 있습니다.
+
 ## 시스템 아키텍처
 
 ![System Architecture](images/system-architecture.png)
@@ -23,9 +22,13 @@ Vue 3 기반 미용실 예약 시스템 프론트엔드 프로젝트입니다.
 ### 메인 페이지
 ![Main Page](images/main.png)
 
+살롱 정보, 디자이너 소개, 제공 서비스 등을 한눈에 확인할 수 있는 메인 페이지입니다.
+
 ### 예약 시스템
 ![Reservation](images/reservation.png)
 ![Reservation Demo](images/reservation.gif)
+
+원하는 날짜와 시간, 디자이너, 서비스를 선택하여 간편하게 예약할 수 있습니다.
 
 ### 마이페이지
 
@@ -35,8 +38,32 @@ Vue 3 기반 미용실 예약 시스템 프론트엔드 프로젝트입니다.
 |------|----------|--------|
 | ![Client](images/mypage-client.png) | ![Designer](images/mypage-designer.png) | ![Manager](images/mypage-manager.png) |
 
+- **고객**: 예약 내역 확인, 개인정보 수정
+- **디자이너**: 스케줄 관리, 예약 확인, 휴무 신청
+- **매니저**: 살롱 전체 관리, 디자이너 관리, 서비스 관리
+
 #### 게스트 마이페이지
 ![Guest Mypage Demo](images/mypage-guest.gif)
+
+## 문제 상황과 성장 포인트
+
+![Web Service](images/web_service.png)
+
+### 문제 상황
+학과 커리큘럼에 데이터베이스 과목이 없어 지식 부족 상태 → 프로젝트 구조상 DB 활용이 필수
+
+### 어려웠던 점
+- DB 경험 없이 개발을 진행해야 했음
+- 학습 시간과 프로젝트 진행이 동시에 부담이 됨
+- → 팀 전체의 이해도 향상이 필요했음
+
+### 해결책
+- 시스템 전체의 흐름을 분석하고, 필요한 요소만 학습
+- 핵심 개념을 정리하여 학습 효율을 향상
+- → 자료 공유와 실습을 통해 팀 이해도를 향상
+
+### 성장 포인트
+> **기초부터 단계적으로 학습하여 이해를 깊게 한 경험** + **지식 공유를 통한 팀 협업 능력 향상** = **구조적 학습과 공유를 통해 개인과 팀의 성장을 동시에 실현**
 
 ## 프로젝트 구조
 

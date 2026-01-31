@@ -1,8 +1,5 @@
 [![Vue.js](https://img.shields.io/badge/Vue.js-3.5-4FC08D?logo=vue.js&logoColor=white)](https://vuejs.org/)
 [![Vite](https://img.shields.io/badge/Vite-7.1-646CFF?logo=vite&logoColor=white)](https://vitejs.dev/)
-[![Pinia](https://img.shields.io/badge/Pinia-2.2-yellow?logo=vue.js&logoColor=white)](https://pinia.vuejs.org/)
-[![Vue Router](https://img.shields.io/badge/Vue_Router-4.4-42b883)](https://router.vuejs.org/)
-[![Axios](https://img.shields.io/badge/Axios-1.7-5A29E4?logo=axios&logoColor=white)](https://axios-http.com/)
 
 🌐 [한국어](README_ko.md) | **日本語**
 
@@ -14,6 +11,8 @@
 
 Vue 3ベースの美容室予約システムフロントエンドプロジェクトです。
 
+顧客は希望する美容室、デザイナー、サービスを選択して予約でき、デザイナーとマネージャーは予約管理およびサロン運営に必要な機能を利用できます。
+
 ## システムアーキテクチャ
 
 ![System Architecture](images/system-architecture.png)
@@ -23,9 +22,13 @@ Vue 3ベースの美容室予約システムフロントエンドプロジェク
 ### メインページ
 ![Main Page](images/main.png)
 
+サロン情報、デザイナー紹介、提供サービスなどを一目で確認できるメインページです。
+
 ### 予約システム
 ![Reservation](images/reservation.png)
 ![Reservation Demo](images/reservation.gif)
+
+希望する日時、デザイナー、サービスを選択して簡単に予約できます。
 
 ### マイページ
 
@@ -35,8 +38,32 @@ Vue 3ベースの美容室予約システムフロントエンドプロジェク
 |------|------------|--------------|
 | ![Client](images/mypage-client.png) | ![Designer](images/mypage-designer.png) | ![Manager](images/mypage-manager.png) |
 
+- **顧客**: 予約履歴の確認、個人情報の修正
+- **デザイナー**: スケジュール管理、予約確認、休暇申請
+- **マネージャー**: サロン全体の管理、デザイナー管理、サービス管理
+
 #### ゲストマイページ
 ![Guest Mypage Demo](images/mypage-guest.gif)
+
+## 問題状況と成長ポイント
+
+![Web Service](images/web_service.png)
+
+### 問題状況
+学科カリキュラムにデータベース科目がなく知識不足の状態 → プロジェクト構造上DB活用が必須
+
+### 困難だった点
+- DB経験がないまま開発を進める必要があった
+- 学習時間とプロジェクト進行が同時に負担となった
+- → チーム全体の理解度向上が必要だった
+
+### 解決策
+- システム全体の流れを分析し、必要な要素のみ学習
+- 核心概念を整理して学習効率を向上
+- → 資料共有と実演を通じてチーム理解度を向上
+
+### 成長ポイント
+> **基礎から段階的に学習し理解を深めた経験** + **知識共有によるチーム協働力向上** = **構造的学習と共有によって個人とチームの成長を同時に実現**
 
 ## プロジェクト構造
 
